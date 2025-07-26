@@ -19,6 +19,7 @@ import { Delete, Share, Trash, Trash2 } from 'lucide-react'
 import { Button } from './ui/button'
 import { SignedOut, SignInButton, useUser ,SignedIn, UserButton} from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
+import { SidebarGroupContent, SidebarTrigger } from "@/components/ui/sidebar";
 
 interface props {
   className?:string
@@ -31,7 +32,12 @@ function Header({className}:props) {
   return (
     <div className={`w-full h-auto px-4 flex flex-row items-center py-4 backdrop-blur-lg ${className}`}>
       <div className='flex justify-between items-center w-full h-full'>
-        <h1 className='text-2xl font-normal cursor-pointer' onClick={() => router.push('/')}>Prarambh</h1>
+        <div className='flex items-center bg-[#171717]'>
+          <SidebarGroupContent className="dark sm:hidden flex sticky top-2 left-0 z-10 h-full bg-[#191919] w-full py-2 inset-2">
+            <SidebarTrigger />
+          </SidebarGroupContent>
+          <h1 className='text-2xl font-normal cursor-pointer' onClick={() => router.push('/')}>Prarambh</h1>
+        </div>
         <div className='flex gap-3 items-center'>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

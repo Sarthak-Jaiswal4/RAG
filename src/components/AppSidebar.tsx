@@ -65,13 +65,13 @@ export function AppSidebar({chatsession}:AppSidebarProps) {
   }, [chatsession])
   
   return (
-    <Sidebar className="dark text-white border-r-2 border-gray-700 overflow-y-auto" collapsible="icon">
-       <SidebarContent>
+    <Sidebar className="dark text-white border-r-2 bg-[#191919] border-gray-700 overflow-y-auto" collapsible="icon">
+       <SidebarContent className="bg-[#191919]">
         <SidebarGroup>
-          <SidebarGroupContent className="sticky top-2 left-0 z-10 h-full bg-[#191919] w-full py-2 inset-2">
+          <SidebarGroupContent className="sticky top-2 left-0 z-10 h-full text-white bg-[#191919] w-full py-2 inset-2">
             <SidebarTrigger />
           </SidebarGroupContent>
-          <SidebarGroupContent className="pt-4 ">
+          <SidebarGroupContent className="pt-4 text-white">
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
@@ -85,7 +85,7 @@ export function AppSidebar({chatsession}:AppSidebarProps) {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
-          <div className="group-data-[collapsible=icon]:hidden">
+          <div className="group-data-[collapsible=icon]:hidden text-white">
             <SidebarGroupLabel className="pb-4 pt-8 text-base text-gray-400">Chats</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -103,7 +103,7 @@ export function AppSidebar({chatsession}:AppSidebarProps) {
           </div>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="bg-[#191919] text-white">
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>

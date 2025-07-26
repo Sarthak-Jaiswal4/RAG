@@ -7,6 +7,15 @@ import { formvalues } from "@/types/formvalues"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { Menu } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Home() {
   const router=useRouter()
@@ -44,7 +53,7 @@ export default function Home() {
   
 
   return (
-    <div className="w-full sm:h-dvh md:h-screen max-h-screen bg-[#171717] text-white relative flex">
+    <div className="w-full sm:h-dvh h-screen max-h-screen bg-[#171717] text-white relative flex">
       <AppSidebar chatsession={chatsessionupdate}/>
       <div className="w-full h-full flex flex-col">
         <Header/>
