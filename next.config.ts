@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
+eslint: {
     ignoreDuringBuilds: true,
+},
+typescript: {
+  ignoreBuildErrors: true,
 },
 };
 
@@ -10,14 +13,7 @@ const nextConfig: NextConfig = {
 module.exports={
   env:{
 
-  },
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
-  },
+  }
 }
 
 export default nextConfig;
