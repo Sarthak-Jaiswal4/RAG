@@ -10,10 +10,10 @@ typescript: {
 };
 
 
-// module.exports={
-//   env:{
+module.exports={
+  env:{
 
-//   }
-// }
+  }
+}
 
 export default nextConfig;

@@ -28,7 +28,11 @@ export default function Home() {
           createdAt:"9876"
         }
         setchatsessionupdate(newquery)
-        router.push(`/chat/${r.data.response.chatid}?query=${encodeURIComponent(query)}&type=${encodeURIComponent(type)}`)
+        sessionStorage.setItem(
+          "initialPayload",
+          JSON.stringify({ message: query, type: type })
+        );
+        router.push(`/chat/${r.data.response.chatid}`)
 
       }).catch(err => console.log("error in extracting name API call",err))
 
@@ -40,7 +44,7 @@ export default function Home() {
   
 
   return (
-    <div className="w-full h-screen max-h-screen bg-[#171717] text-white relative flex">
+    <div className="w-full sm:h-dvh md:h-screen max-h-screen bg-[#171717] text-white relative flex">
       <AppSidebar chatsession={chatsessionupdate}/>
       <div className="w-full h-full flex flex-col">
         <Header/>
