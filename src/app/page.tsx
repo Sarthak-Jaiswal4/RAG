@@ -7,19 +7,13 @@ import { formvalues } from "@/types/formvalues"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Menu } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetHeader,
-} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Home() {
   const router=useRouter()
   const [chatsessionupdate, setchatsessionupdate] = useState<chatsessiontype>({
+    id:"",
     title:"",
     url:"",
     createdAt:""
@@ -32,6 +26,7 @@ export default function Home() {
         const query=payload.query
         const type=payload.type as string
         const newquery={
+          id:r.data.response.chatid,
           title:r.data.response.extractedName,
           url:`/chat/${r.data.response.chatid}`,
           createdAt:"9876"

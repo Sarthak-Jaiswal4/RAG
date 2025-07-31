@@ -11,5 +11,4 @@ typescript: {
 
 
 
-
 export default nextConfig;

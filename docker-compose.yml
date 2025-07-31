@@ -1,3 +1,4 @@
+version: "3.9"
 services:
   redis:
     container_name: redis
@@ -15,11 +16,10 @@ services:
       - SETUID
       - DAC_OVERRIDE
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
-        max-size: "1m"
+        max-size: 1m
         max-file: "1"
-
   searxng:
     container_name: searxng
     image: docker.io/searxng/searxng:latest
@@ -27,13 +27,13 @@ services:
     networks:
       - searxng
     ports:
-      - "8181:8080" #change 8181 as needed, but not 8080
+      - 8181:8080
     volumes:
       - ./searxng_config:/etc/searxng:rw
     environment:
-      - SEARXNG_BASE_URL=http://192.168.0.188:8181/ #Change "your.docker.server.ip" to your Docker server's IP
-      - UWSGI_WORKERS=4 #You can change this
-      - UWSGI_THREADS=4 #You can change this
+      - SEARXNG_BASE_URL=http://192.168.0.188:8181/
+      - UWSGI_WORKERS=4
+      - UWSGI_THREADS=4
     cap_drop:
       - ALL
     cap_add:
@@ -41,14 +41,12 @@ services:
       - SETGID
       - SETUID
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
-        max-size: "1m"
+        max-size: 1m
         max-file: "1"
-
 networks:
-  searxng:
-
+  searxng: null
 volumes:
-  valkey-data: #redis storage
-  searxng: #searxng storage
+  valkey-data: null
+  searxng: null

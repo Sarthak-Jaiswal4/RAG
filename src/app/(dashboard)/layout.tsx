@@ -5,6 +5,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import React from 'react'
 import '../globals.css'
 import { Geist, Geist_Mono } from "next/font/google";
+import { Metadata } from 'next';
 
 const geistSans = Geist({
     variable: "--font-geist-sans",

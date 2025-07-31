@@ -5,6 +5,8 @@ import { formvalues } from '@/types/formvalues'
 import axios from 'axios'
 import { shoudldosearch } from '@/helper/action'
 import AiResponse from './AiResponse'
+import ErrorDialogue from './ErrorDialogue'
+import { useUser } from '@clerk/nextjs'
 
 interface props {
     className?:string,
@@ -54,7 +56,7 @@ const handleform = async (payload: any,setIsSearching:React.Dispatch<React.SetSt
   }
 };
 
-const searchOrweb=async(payload: formvalues,setIsSearching:React.Dispatch<React.SetStateAction<boolean>>,setState:React.Dispatch<React.SetStateAction<string>>)=>{
+const searchOrweb=async(payload: formvalues,setIsSearching:React.Dispatch<React.SetStateAction<boolean>>,setState:React.Dispatch<React.SetStateAction<string>>,setisweb:React.Dispatch<React.SetStateAction<boolean>>)=>{
   setIsSearching(true)
   try {
     const response = await axios.post(`/api/chatorweb`,payload)
@@ -65,6 +67,11 @@ const searchOrweb=async(payload: formvalues,setIsSearching:React.Dispatch<React.
       ...payload,confidence,decision,type
     }
     setState(response.data.state)
+    if(response.data.state==="SEARCH"){
+      setisweb(true)
+    }else{
+      setisweb(false)
+    }
     return data
   } catch (err) {
     console.log("error in searching wheather to search or chat API call",err)
@@ -87,25 +94,36 @@ const GetMsg=async(sessionname:string)=>{
 }
  
 function Chat({className,query,firstchat}:props) {
+  const { isSignedIn, user,isLoaded } = useUser();
+  const [isweb, setisweb] = useState(false)
   const [State, setState] = useState("Analysing")
   const [isSearching, setIsSearching] = useState(false)
   const [message, setMessage] = useState<messagetype[]>([])
+  const [error, seterror] = useState<string>("")
   const firstChatProcessed = React.useRef(false)
+  const [prevmsg, setprevmsg] = useState<string>("")
+  const [errorwindow, seterrorwindow] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const sessionname=firstchat.sessionname
 
   useEffect(() => {
-    if (firstchat?.query && !firstChatProcessed.current) {
+    // if((query.query== firstchat.query)){
+    //   seterror('You have entered the same query as your previous one. Please try a different question.');
+    //   seterrorwindow(true)
+    //   console.log('Error: You have entered the same query as your previous one.');
+    // }else
+     if(firstchat?.query && !firstChatProcessed.current) {
       const processFirstChat = async () => {
         firstChatProcessed.current = true
         
         // Add human message to chat
-        setMessage(e => [...e, {role:"human",content:firstchat.query}])
-        
         try {
+          setMessage(e => [...e, {role:"human",content:firstchat.query}])
+          setprevmsg(firstchat.query)
           await upload("human",firstchat.query,sessionname)
           setIsSearching(true)
           //should search or think
-          const shouldsearch = await searchOrweb(firstchat, setIsSearching,setState)
+          const shouldsearch = await searchOrweb(firstchat, setIsSearching,setState,setisweb)
           console.log('First chat search:', shouldsearch)
           
           //search query
@@ -124,15 +142,19 @@ function Chat({className,query,firstchat}:props) {
   }, [firstchat])
 
   useEffect(() => {
-    if (query.query && query.query !== firstchat?.query) {
+    if((query.query== firstchat.query)){
+      seterror('You have entered the same query as your previous one. Please try a different question.');
+      seterrorwindow(true)
+      console.log(error)
+    }else if(query.query && query.query !== firstchat?.query) {
       const processQuery = async () => {
         //update the human message in chat
-        setMessage(e => [...e, {role:"human",content:query.query}])
-        
         try {
+          setMessage(e => [...e, {role:"human",content:query.query}])
+          setprevmsg(query.query)
           //should search or think
           await upload("human",query.query,sessionname)
-          const shouldsearch = await searchOrweb(query, setIsSearching,setState)
+          const shouldsearch = await searchOrweb(query, setIsSearching,setState,setisweb)
           console.log('Regular query search:', shouldsearch)
           
           //search query
@@ -167,34 +189,54 @@ function Chat({className,query,firstchat}:props) {
     window.scrollTo({left:0, top:document.body.scrollHeight,behavior:'smooth'});
   }, [message]);
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  console.log(error,errorwindow)
+  if (isMounted === false) {
+    return <>Loading</>
+  }
+
   return (
-    <div className={`${className}`}>
-      <div
-        className='md:w-[70%] w-full max-w-182 h-full mx-auto flex flex-col gap-6 items-center pb-24'>
-        {
-          message?.map((item, i) => (
-            <div key={i} className={`w-[95%] flex rounded-3xl ${item.role == "AI" ? 'justify-start' : 'justify-end'}`}>
-              <h1 className={` ${item.role == "AI" ? 'justify-start w-[97%]' : 'bg-[#292929] max-w-[80%]'} py-3 px-4 rounded-3xl `}>{item.role=='AI' ?  <AiResponse content={item.content}/> :item.content}</h1>
-            </div>
-            // {(i+1)%2==0 ? <Separator className='w-[75%] mt-6 mb-4 bg-gray-700' /> :null}
-          ))
-        }
-        {isSearching && (
-          <div className="w-[90%] flex rounded-3xl justify-start">
-            <div className="justify-start w-[97%] py-3 px-4 rounded-3xl bg-[#292929]">
-              <div className="flex items-center gap-2">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+    <>
+    {isLoaded && 
+      <div className={`${className} relative`}>
+        <div
+          className='md:w-[70%] w-full max-w-182 h-full mx-auto flex flex-col gap-6 items-center pb-24'>
+          {
+            message?.map((item, i) => (
+              <div key={i} className={`w-[95%] flex rounded-3xl ${item.role == "AI" ? 'justify-start' : 'justify-end'}`}>
+                <h1 className={` ${item.role == "AI" ? 'justify-start w-[97%]' : 'bg-[#292929] max-w-[80%]'} py-3 px-4 rounded-3xl `}>{item.role=='AI' ?  <AiResponse State={isweb}  content={item.content}/> :item.content}</h1>
+              </div>
+              // {(i+1)%2==0 ? <Separator className='w-[75%] mt-6 mb-4 bg-gray-700' /> :null}
+            ))
+          }
+          {isSearching && (
+            <div className="w-[90%] flex rounded-3xl justify-start">
+              <div className="justify-start w-[97%] py-3 px-4 rounded-3xl bg-[#292929]">
+                <div className="flex items-center gap-2">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                  <span className="text-gray-400">{State}...</span>
                 </div>
-                <span className="text-gray-400">{State}...</span>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    }
+    {/* {isMounted && error && errorwindow && (
+      <ErrorDialogue 
+        window={seterrorwindow}  
+        title="Error" 
+        desc={error} 
+        type='okay' 
+      />
+    )} */}
+    </>
   )
 }
 
