@@ -110,7 +110,7 @@ const AuthPages = () => {
         </div>
 
         {/* Verification Card */}
-        <div className="bg-gray-900/40 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-gray-700/50">
+        <div className="bg-gray-900/40 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-gray-700/50">
           <div className="space-y-6">
             {/* Code Input */}
             <div className="space-y-4 flex justify-center flex-col items-center">
@@ -252,7 +252,7 @@ const AuthPages = () => {
         </div>
 
         {/* Auth Card */}
-        <div className="bg-gray-900/40 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-gray-700/50">
+        <div className="bg-gray-900/40 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-gray-700/50">
           <div className="space-y-6">
             {/* Name field (Sign Up only) */}
             <div className="space-y-2">

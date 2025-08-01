@@ -102,3 +102,13 @@ export const GetMessages=async(chatsessionid:string)=>{
         throw new Error(error) 
     }
 }
+
+export const Deletechat=async(chatid:string)=>{
+    try{
+        const response=await chatSessionModel.findByIdAndDelete(chatid)
+        return response
+    }catch(error:any){
+        console.log('Error in deleting chat from mongodb',error)
+        throw new Error(error)
+    }
+}

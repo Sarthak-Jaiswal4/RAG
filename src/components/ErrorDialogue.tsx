@@ -11,7 +11,13 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 
-function ErrorDialogue({ title, desc, type, window }: { title: string; desc: string; type: string, window:any }) {
+function ErrorDialogue({ title, desc, type, window, action }: { title: string; desc: string; type: string, window:any, action?:any }) {
+
+    const OnCancelDelete=()=>{
+        window(false)
+        action(false)
+    }
+
     return (
         <div className='fixed inset-0 flex justify-center items-center z-50 bg-black/50 backdrop-blur-sm'>
             <Card className="w-full flex gap-1 max-w-sm bg-[#252525] text-white dark shadow-2xl">
@@ -25,10 +31,10 @@ function ErrorDialogue({ title, desc, type, window }: { title: string; desc: str
                     {type === "delete"
                         ?
                         <div className='flex gap-4 '>
-                            <Button variant="outline" onClick={()=> window(false)}>
+                            <Button variant="outline" className="cursor-pointer" onClick={OnCancelDelete}>
                                 Cancel
                             </Button>
-                            <Button variant="destructive">
+                            <Button variant="destructive" className="cursor-pointer" onClick={()=>action(true)}>
                                 Delete
                             </Button>
                         </div>

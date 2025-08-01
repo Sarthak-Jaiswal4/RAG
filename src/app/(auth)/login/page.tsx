@@ -79,7 +79,7 @@ const page = () => {
         </div>
 
         {/* Auth Card */}
-        <div className="bg-gray-900/40 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-gray-700/50">
+        <div className="bg-gray-900/40 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-gray-700/50">
           <div className="space-y-6">
 
             {/* Email field */}

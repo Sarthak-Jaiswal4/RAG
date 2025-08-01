@@ -7,8 +7,6 @@ import { formvalues } from "@/types/formvalues"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Home() {
   const router=useRouter()
@@ -45,13 +43,13 @@ export default function Home() {
       throw new Error(error)
     }
   }
-  
 
   return (
-    <div className="w-full sm:h-dvh h-screen max-h-screen bg-[#171717] text-white relative flex">
+    <div className="w-full sm:h-full h-screen max-h-screen bg-[#171717] text-white relative flex">
       <AppSidebar chatsession={chatsessionupdate}/>
-      <div className="w-full h-full flex flex-col">
+      <div className="w-full h-screen flex flex-col justify-center items-center">
         <Header/>
+        <h1 className="w-full h-full flex justify-center items-center md:text-[2vw] text-[7vw] text-semibold text-wrap text-center">Let's explore your questions together!</h1>
         <div className="w-full h-full flex flex-col justify-end items-center">
           <Searchbar dosearch={firstquery}/>
         </div>

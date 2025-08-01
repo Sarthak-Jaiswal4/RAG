@@ -9,6 +9,9 @@ import axios from "axios"
 import { useState } from "react";
 import ErrorDialogue from "./ErrorDialogue"
 import { useParams } from "next/navigation"
+import { useUser } from "@clerk/nextjs"
+import { Button } from "./ui/button"
+import { useRouter } from "next/navigation"
 
 interface AppSidebarProps {
   chatsession?: chatsessiontype
@@ -35,10 +38,12 @@ const items = [
 ]
 
 export function AppSidebar({ chatsession }: AppSidebarProps) {
+  const { isSignedIn, user, isLoaded } = useUser();
   const [chats, setChats] = useState<chatsessiontype[]>([]);
   const { setOpen } = useSidebar()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const chatid=useParams()
+  const router=useRouter()
 
   const getchats = async () => {
     try {
@@ -92,37 +97,60 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                 ))}
               </SidebarMenu>
             </SidebarGroupContent>
-            <div className="group-data-[collapsible=icon]:hidden text-white">
-              <SidebarGroupLabel className="pb-4 pt-8 text-base text-gray-400">Chats</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {chats.toReversed().map((item) => (
-                    <SidebarMenuItem key={item.id} className="group" >
-                      <SidebarMenuButton className={`${item.id===chatid.id ? `bg-[#272727]` : null} flex`} asChild>
-                        <a href={item.url}>
-                          <span>{item.title}</span>
-                        </a>
-                      </SidebarMenuButton>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <SidebarMenuAction className="">
-                            <MoreHorizontal />
-                          </SidebarMenuAction>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="dark" side="right" align="start">
-                          <DropdownMenuItem className='pb-2 flex hover:bg-red-600' onClick={() => setShowDeleteDialog(true)}>
-                            <Trash2 className='text-red-400 size-5' />
-                            <h1 className='text-red-400 px-1'>
-                              Delete
-                            </h1>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </div>
+            <SidebarGroupContent>
+              <SidebarContent className="w-full">
+                {isSignedIn 
+                ?
+                <div className="group-data-[collapsible=icon]:hidden text-white">
+                <SidebarGroupLabel className="pb-4 pt-8 text-base text-gray-400">Chats</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {chats.toReversed().map((item) => (
+                      <SidebarMenuItem key={item.id} className="group" >
+                        <SidebarMenuButton className={`${item.id===chatid.id ? `bg-[#272727]` : null} flex`} asChild>
+                          <a href={item.url}>
+                            <span>{item.title}</span>
+                          </a>
+                        </SidebarMenuButton>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <SidebarMenuAction className="">
+                              <MoreHorizontal />
+                            </SidebarMenuAction>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="dark" side="right" align="start">
+                            <DropdownMenuItem className='pb-2 flex hover:bg-red-600' onClick={() => setShowDeleteDialog(true)}>
+                              <Trash2 className='text-red-400 size-5' />
+                              <h1 className='text-red-400 px-1'>
+                                Delete
+                              </h1>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+                </div>
+                :
+                <div className="group-data-[collapsible=icon]:hidden flex flex-col items-center justify-center h-[35vw] p-6">
+                  <div className="flex flex-col items-center gap-4">  
+                    <p className="text-gray-400 text-center text-base max-w-xs">
+                      Create an account or log in to save your conversations and access them anytime.
+                    </p>
+                    <Button
+                      className="mt-2 px-6 py-2 text-white rounded-full shadow transition-all duration-200 font-medium text-base"
+                      onClick={() => router.push("/login")}
+                      variant='outline'
+                    >
+                      Sign In
+                    </Button>
+                  </div>
+                </div>
+                }
+              </SidebarContent>
+            </SidebarGroupContent>
+
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter className="bg-[#191919] w-full text-white">
@@ -143,7 +171,7 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                     <span>Account</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <span className="text-red-400">Logout</span>
+                    <span className="text-red-400" onClick={()=> router.push('/')}>Logout</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

@@ -74,7 +74,7 @@ function Searchbar({ className,search,dosearch }: props) {
           className="w-full flex justify-center items-center overflow-y-visible"
         >
           <div
-            className="w-[98%] sm:w-[50vw] md:w-[75vw] lg:w-190 bg-[#303030]/50 backdrop-blur-lg border-2 border-gray-400 rounded-3xl p-4 flex flex-col justify-between"
+            className="w-[98%] sm:w-[50vw] md:w-[75vw] lg:w-190 bg-[#303030]/50 backdrop-blur-md border-2 border-gray-400 rounded-3xl p-4 flex flex-col justify-between"
             style={{ height: `${containerHeight}px`, minHeight: '120px' }}
           >
             <textarea
@@ -106,9 +106,9 @@ function Searchbar({ className,search,dosearch }: props) {
                       <Plus />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-20 dark" align="start">
+                  <DropdownMenuContent className="w-20 dark bg-[#252525] border-0 shadow-2xl/30 rounded-3xl" align="start">
                     <DropdownMenuGroup>
-                      <DropdownMenuItem>Add files</DropdownMenuItem>
+                      <DropdownMenuItem className="hover:bg-[#353535] cursor-pointer">Add files</DropdownMenuItem>
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -129,7 +129,7 @@ function Searchbar({ className,search,dosearch }: props) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                    className="w-48 dark p-2 rounded-3xl"
+                    className="w-48 dark p-2 rounded-3xl bg-[#252525] border-0 shadow-2xl/30"
                     align="start"
                   >
                     <DropdownMenuGroup>
@@ -139,6 +139,7 @@ function Searchbar({ className,search,dosearch }: props) {
                           onClick={() =>
                             setWhichFunction({ title: item.title, icon: item.icon })
                           }
+                          className="cursor-pointer"
                         >
                           <item.icon />
                           <span></span>

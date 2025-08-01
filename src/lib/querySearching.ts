@@ -45,7 +45,7 @@ async function DenseRetrieveQuery(queryembedding: number[],userquery: string,typ
           queryVector: queryembedding,
           path: "embedding",
           numCandidates: 100,
-          limit: type==="Deep Research"? 15 : 8,
+          limit: type==="Deep Research"? 18 : 10,
           similarityMetric: "cosine",
         },
       },
@@ -87,7 +87,7 @@ async function SparseRetrieveQuery(userquery: string,type?:string): Promise<any[
         },
       },
       {
-        $limit: type==="Deep Research"? 15 : 8,
+        $limit: type==="Deep Research"? 18: 8,
       },
       {
         $project: {
@@ -163,11 +163,6 @@ async function mergeRetrieval(dembedding: any[],sembedding: any[]): Promise<any[
 }
 
 async function answerwithollama(userquery: string,result: any[],type?:string): Promise<any> {
-  // const context = result
-  //   .map((chunk, i) => {
-  //     return `[Chunk ${chunk.chunkid}]\n${chunk.densetext || chunk.sparsetext}\n${chunk.metadata.url}`;
-  //   })
-  //   .join("\n\n");
 
   const sourceList = result
   .map((chunk, i) => `${i + 1}. ${chunk.metadata.url}`)
