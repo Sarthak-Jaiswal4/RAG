@@ -2,7 +2,7 @@
 import React from 'react'
 import { Skeleton } from './ui/skeleton'
 
-function ChatSkeleton({className}:{className:string}) {
+function ChatSkeleton() {
     return (
         <>
             {Array.from({ length: 4 }).map((_, idx) => (

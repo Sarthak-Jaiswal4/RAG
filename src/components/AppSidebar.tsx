@@ -3,25 +3,19 @@ import { Sidebar, SidebarContent, SidebarMenuItem, SidebarMenuButton, SidebarMen
 import { ChevronUp, MoreHorizontal, Plus, Search, Trash2, User2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { useSidebar } from "@/components/ui/sidebar"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { chatsessiontype } from "@/types/chatsessiontype"
 import axios from "axios"
 import { useState } from "react";
 import ErrorDialogue from "./ErrorDialogue"
 import { useParams } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
 import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
+import ChatNameSkeleton from "./ChatNameSkeleton"
 
 interface AppSidebarProps {
   chatsession?: chatsessiontype
-}
-
-interface chat {
-  id: string,
-  title: string,
-  url: string,
-  createdAt: string
 }
 
 const items = [
@@ -38,12 +32,12 @@ const items = [
 ]
 
 export function AppSidebar({ chatsession }: AppSidebarProps) {
-  const { isSignedIn, user, isLoaded } = useUser();
   const [chats, setChats] = useState<chatsessiontype[]>([]);
   const { setOpen } = useSidebar()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const chatid=useParams()
   const router=useRouter()
+  const { data: session, status } = useSession();
 
   const getchats = async () => {
     try {
@@ -75,6 +69,10 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
     getchats()
   }, [chatsession])
 
+  // Memoize session status to prevent unnecessary re-renders
+  const isAuthenticated = useMemo(() => status === "authenticated", [status])
+  const isLoading = useMemo(() => status === "loading", [status])
+
   return (
     <>
       <Sidebar className="dark text-white border-r-2 bg-[#191919] border-gray-700 overflow-y-auto " collapsible="icon">
@@ -99,55 +97,60 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
             </SidebarGroupContent>
             <SidebarGroupContent>
               <SidebarContent className="w-full">
-                {isSignedIn 
-                ?
-                <div className="group-data-[collapsible=icon]:hidden text-white">
-                <SidebarGroupLabel className="pb-4 pt-8 text-base text-gray-400">Chats</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {chats.toReversed().map((item) => (
-                      <SidebarMenuItem key={item.id} className="group" >
-                        <SidebarMenuButton className={`${item.id===chatid.id ? `bg-[#272727]` : null} flex`} asChild>
-                          <a href={item.url}>
-                            <span>{item.title}</span>
-                          </a>
-                        </SidebarMenuButton>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <SidebarMenuAction className="">
-                              <MoreHorizontal />
-                            </SidebarMenuAction>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent className="dark" side="right" align="start">
-                            <DropdownMenuItem className='pb-2 flex hover:bg-red-600' onClick={() => setShowDeleteDialog(true)}>
-                              <Trash2 className='text-red-400 size-5' />
-                              <h1 className='text-red-400 px-1'>
-                                Delete
-                              </h1>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-                </div>
-                :
-                <div className="group-data-[collapsible=icon]:hidden flex flex-col items-center justify-center h-[35vw] p-6">
-                  <div className="flex flex-col items-center gap-4">  
-                    <p className="text-gray-400 text-center text-base max-w-xs">
-                      Create an account or log in to save your conversations and access them anytime.
-                    </p>
-                    <Button
-                      className="mt-2 px-6 py-2 text-white rounded-full shadow transition-all duration-200 font-medium text-base"
-                      onClick={() => router.push("/login")}
-                      variant='outline'
-                    >
-                      Sign In
-                    </Button>
+                {isLoading ? (
+                  <div className="group-data-[collapsible=icon]:hidden flex flex-col justify-center items-start overflow-hidden">
+                    <h1 className="pb-4 pt-5 text-medium text-gray-400">Chats</h1>
+                    <ChatNameSkeleton />
                   </div>
-                </div>
-                }
+                ) : isAuthenticated ? (
+                  <div className="group-data-[collapsible=icon]:hidden text-white">
+                    <SidebarGroupLabel className="pb-4 pt-8 text-base text-gray-400">Chats</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      <SidebarMenu>
+                        {chats.toReversed().map((item) => (
+                          <SidebarMenuItem key={item.id} className="group" >
+                            <SidebarMenuButton className={`${item.id===chatid.id ? `bg-[#272727]` : null} flex`} asChild>
+                              <a href={item.url}>
+                                <span>{item.title}</span>
+                              </a>
+                            </SidebarMenuButton>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <SidebarMenuAction className="">
+                                  <MoreHorizontal className='text-white'/>
+                                </SidebarMenuAction>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent className="dark" side="right" align="start">
+                                <DropdownMenuItem className='pb-2 flex hover:bg-red-600' onClick={() => setShowDeleteDialog(true)}>
+                                  <Trash2 className='text-red-400 size-5' />
+                                  <h1 className='text-red-400 px-1'>
+                                    Delete
+                                  </h1>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </SidebarMenuItem>
+                        ))}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </div>
+                ) : (
+                  <div className="group-data-[collapsible=icon]:hidden flex flex-col items-center justify-center h-[60vh] md:h-[30vw] p-6">
+                    <div className="flex flex-col items-center gap-4">  
+                      <p className="text-gray-400 text-center text-base max-w-xs">
+                        Create an account or log in to save your conversations and access them anytime.
+                      </p>
+                      <Button
+                        className="mt-2 px-6 py-2 text-black sm:text-white rounded-full shadow transition-all duration-200 font-medium text-base "
+                        onClick={() => router.push("/login")}
+                        variant='outline'
+                      >
+                        Sign In
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                
               </SidebarContent>
             </SidebarGroupContent>
 
@@ -185,6 +188,9 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
           desc='Are you sure you want to permanently delete the current chat? This action cannot be undone and all messages in this conversation will be lost.'
           type='delete'
           window={setShowDeleteDialog}
+          action={() => {
+            // Handle delete action
+          }}
         />
       )}
     </>

@@ -5,7 +5,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import React from 'react'
 import '../globals.css'
 import { Geist, Geist_Mono } from "next/font/google";
-import { Metadata } from 'next';
+import { SessionProvider } from 'next-auth/react';
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -27,15 +27,17 @@ export default function RootLayout({
           <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
-            <div className="w-full h-full flex">
-              <SidebarProvider>
-              <AppSidebar/>
-              <div className="w-full min-h-screen flex flex-col bg-[#171717] text-white relative">
-                <Header className='sticky top-0 z-10' />
-                {children}
+            <SessionProvider>
+              <div className="w-full h-full flex">
+                <SidebarProvider>
+                <AppSidebar/>
+                <div className="w-full min-h-screen flex flex-col bg-[#171717] text-white relative">
+                  <Header className='sticky top-0 z-10' />
+                  {children}
+                </div>
+                </SidebarProvider>
               </div>
-              </SidebarProvider>
-            </div>
+            </SessionProvider>
           </body>
         </html>
     );

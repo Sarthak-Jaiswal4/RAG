@@ -4,18 +4,18 @@ import chatSessionModel, { ChatSession } from "./chat.model";
 export interface User extends Document {
     username:string,
     email:string,
-    password:string,
+    password?:string,
     chats:ChatSession[],
-    profilepic:string,
+    profilepic?:string,
     isverified:boolean,
-    id:string
+    // id?:string
 }
 
 const UserSchema:Schema<User>=new Schema ({
-    id:{
-        type:String,
-        required:[true,'id is required']
-    },
+    // id:{
+    //     type:String,
+    //     required:[true,'id is required']
+    // },
     username:{
         type:String,
         required:[true,'username is required'],

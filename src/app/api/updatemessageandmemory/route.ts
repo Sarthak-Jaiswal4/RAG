@@ -1,7 +1,7 @@
 import { UpdateUserMessage } from "@/Database/queries"
 import DBconnection from "@/lib/Connection"
 import userModel from "@/models/user.model"
-import { auth } from "@clerk/nextjs/server"
+import { auth } from "@/auth"
 import { NextResponse } from "next/server"
 
 await DBconnection()
@@ -13,10 +13,10 @@ export async function POST(request:Request){
             sessionname:string
         };
 
-        const { sessionClaims } = await auth()
-        const email = sessionClaims?.email
+        const session = await auth()
+        const email = session?.user?.email
         if(!email || !content){
-            return NextResponse.json({ status: 404, response: "Error in finding email" })
+            return NextResponse.json({ status: 401, response: "Unauthorized - No email found" })
         }
 
         const user=await userModel.findOne({email})
@@ -39,6 +39,6 @@ export async function POST(request:Request){
 
     } catch (error:any) {
         console.log('Error in extracting chatsession API')
-        return NextResponse.json({ status: 404, response: "Error in finding chat by user" })
+        return NextResponse.json({ status: 500, response: "Error in finding chat by user" })
     }
 }

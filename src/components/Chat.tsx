@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from 'react'
+import React, { useState, useEffect, Suspense, useMemo } from 'react'
 import { Separator } from './ui/separator'
 import { messagetype } from '@/types/messagetype'
 import { formvalues } from '@/types/formvalues'
@@ -6,7 +6,6 @@ import axios from 'axios'
 import { shoudldosearch } from '@/helper/action'
 import AiResponse from './AiResponse'
 import ErrorDialogue from './ErrorDialogue'
-import { useUser } from '@clerk/nextjs'
 import ChatSkeleton from './ChatSkeleton'
 
 interface props {
@@ -95,7 +94,6 @@ const GetMsg=async(sessionname:string)=>{
 }
  
 function Chat({className,query,firstchat}:props) {
-  const { isSignedIn, user,isLoaded } = useUser();
   const [isweb, setisweb] = useState(false)
   const [State, setState] = useState("Analysing")
   const [isSearching, setIsSearching] = useState(false)
@@ -193,46 +191,42 @@ function Chat({className,query,firstchat}:props) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  console.log(error,errorwindow)
+
   if (isMounted === false) {
-    return <>Loading</>
+    return <ChatSkeleton />
   }
 
   return (
     <>
-    {isLoaded && 
-      <div className={`${className} relative`}>
-        <div
-          className='md:w-[70%] w-full max-w-182 h-full mx-auto flex flex-col gap-6 items-center pb-24'>
-
-              {
-                message?.length>0 ?
-                <ChatSkeleton className='w-full'/>
-                :
-                message?.map((item, i) => (
-                  <div key={i} className={`w-[95%] flex rounded-3xl ${item.role == "AI" ? 'justify-start' : 'justify-end'}`}>
-                    <h1 className={` ${item.role == "AI" ? 'justify-start w-[97%]' : 'bg-[#292929] max-w-[80%]'} py-3 px-4 rounded-3xl `}>{item.role=='AI' ?  <AiResponse State={isweb}  content={item.content}/> :item.content}</h1>
-                  </div>
-                  // {(i+1)%2==0 ? <Separator className='w-[75%] mt-6 mb-4 bg-gray-700' /> :null}
-                ))
-              }
-          {isSearching && (
-            <div className="w-[90%] flex rounded-3xl justify-start">
-              <div className="justify-start w-[97%] py-3 px-4 rounded-3xl bg-[#292929]">
-                <div className="flex items-center gap-2">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  </div>
-                  <span className="text-gray-400">{State}...</span>
+    <div className={`${className} relative`}>
+      <div
+        className='md:w-[70%] w-full max-w-182 h-full mx-auto flex flex-col gap-6 items-center pb-24'>
+            {
+              message?.length>0 ?
+              message?.map((item, i) => (
+                <div key={i} className={`w-[95%] flex rounded-3xl ${item.role == "AI" ? 'justify-start' : 'justify-end'}`}>
+                  <h1 className={` ${item.role == "AI" ? 'justify-start w-[97%]' : 'bg-[#292929] max-w-[80%]'} py-3 px-4 rounded-3xl `}>{item.role=='AI' ?  <AiResponse State={isweb}  content={item.content}/> :item.content}</h1>
                 </div>
+              ))
+              :
+              <ChatSkeleton />
+            }
+        {isSearching && (
+          <div className="w-[90%] flex rounded-3xl justify-start">
+            <div className="justify-start w-[97%] py-3 px-4 rounded-3xl bg-[#292929]">
+              <div className="flex items-center gap-2">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                </div>
+                <span className="text-gray-400">{State}...</span>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-    }
+    </div>
     {/* {isMounted && error && errorwindow && (
       <ErrorDialogue 
         window={seterrorwindow}  

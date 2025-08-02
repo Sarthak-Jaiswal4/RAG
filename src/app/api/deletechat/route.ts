@@ -1,6 +1,6 @@
 import { Deletechat } from "@/Database/queries"
 import DBconnection from "@/lib/Connection"
-import { auth } from "@clerk/nextjs/server"
+import { auth } from "@/auth"
 import { NextResponse } from "next/server"
 
 await DBconnection()
@@ -17,10 +17,10 @@ export async function POST(request: Request) {
             })
         }
 
-        const { sessionClaims } = await auth()
-        const email = sessionClaims?.email
+        const session = await auth()
+        const email = session?.user?.email
         if(!email){
-            return NextResponse.json({ status: 404, response: "Error in finding email" })
+            return NextResponse.json({ status: 401, response: "Unauthorized - No email found" })
         }
 
         const chat=await Deletechat(chatid)

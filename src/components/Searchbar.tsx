@@ -68,13 +68,13 @@ function Searchbar({ className,search,dosearch }: props) {
   };
 
   return (
-    <div className={`${className} w-full flex justify-center items-center text-white mb-6`}>
+    <div className={`${className} w-full flex justify-center items-center text-white mb-6 border-0 `}>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="w-full flex justify-center items-center overflow-y-visible"
         >
           <div
-            className="w-[98%] sm:w-[50vw] md:w-[75vw] lg:w-190 bg-[#303030]/50 backdrop-blur-md border-2 border-gray-400 rounded-3xl p-4 flex flex-col justify-between"
+            className="w-[98%] sm:w-[50vw] md:w-[75vw] lg:w-190 bg-[#303030]/50 backdrop-blur-md border-2 shadow-xl border-gray-400 rounded-3xl p-4 flex flex-col justify-between"
             style={{ height: `${containerHeight}px`, minHeight: '120px' }}
           >
             <textarea

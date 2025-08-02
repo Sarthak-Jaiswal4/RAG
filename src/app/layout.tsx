@@ -4,7 +4,7 @@ import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import Header from "@/components/Header";
-import { ClerkProvider } from "@clerk/nextjs";
+import { SessionProvider } from 'next-auth/react';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,18 +27,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en"> 
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ClerkProvider>
-          <SidebarProvider>
-            <div className="w-full h-full flex">
-              {children}
-            </div>
-          </SidebarProvider>
-        </ClerkProvider>
-      </body>
-    </html>
+    <SessionProvider>
+      <html lang="en"> 
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+            <SidebarProvider>
+              <div className="w-full h-full flex">
+                {children}
+              </div>
+            </SidebarProvider>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

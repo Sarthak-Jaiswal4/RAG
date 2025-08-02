@@ -2,6 +2,7 @@ import DBconnection from "@/lib/Connection";
 import chatSessionModel, { ChatSession } from "@/models/chat.model"
 import contentModel, { contentSchema } from "@/models/content.model"
 import memoryModel from "@/models/memory.model"
+import userModel from "@/models/user.model";
 
 await DBconnection()
 export const StoringChatSession=async(data:any)=>{
@@ -110,5 +111,24 @@ export const Deletechat=async(chatid:string)=>{
     }catch(error:any){
         console.log('Error in deleting chat from mongodb',error)
         throw new Error(error)
+    }
+}
+
+export const createuserViaGoogle=async(name:string,email:string,email_verified:boolean)=>{
+    try {
+        console.log(name,email,email_verified)
+        const user=await userModel.create({
+            username:name,
+            email,
+            isverified:email_verified
+        })
+        console.log(user)
+        if(!user){
+            throw new Error('Error in creating google new user in database')
+        }
+        return user
+    } catch (error) {
+        console.log('Error in creating Google user in Database',error)
+        throw new Error('Error in storing new Google user in database')
     }
 }
