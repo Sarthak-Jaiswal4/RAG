@@ -1,10 +1,6 @@
 'use client'
 import Chatsection from '@/components/Chatsection'
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { formvalues } from '@/types/formvalues'
-import { messagetype } from '@/types/messagetype'
-import { Query } from 'mongoose'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 function page({ params }: { params: Promise<{ id: string }> }) {
@@ -16,7 +12,7 @@ function page({ params }: { params: Promise<{ id: string }> }) {
   const load:any={
     query:queryParam, type:typeParam,sessionname:id
   }
-  console.log(load)
+
   useEffect(() => {
     // read and clear sessionStorage once on mount
     const raw = sessionStorage.getItem("initialPayload");

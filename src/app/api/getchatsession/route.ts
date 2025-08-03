@@ -9,7 +9,6 @@ await DBconnection()
 export async function GET(req:Request){
     try {
         const session = await auth()
-        console.log(session)
 
         if (!session?.user?.email) {
             return NextResponse.json({ status: 401, response: "Unauthorized - No email found" })
@@ -28,6 +27,13 @@ export async function GET(req:Request){
 
     } catch (error:any) {
         console.log('Error in extracting chatsession API',error)
+        // Return a more specific error message based on the error type
+        if (error.message?.includes('secret')) {
+            return NextResponse.json({ status: 500, response: "Authentication configuration error" })
+        }
+        if (error.message?.includes('database')) {
+            return NextResponse.json({ status: 500, response: "Database connection error" })
+        }
         return NextResponse.json({ status: 500, response: "Error in finding chat by user" })
     }
 }

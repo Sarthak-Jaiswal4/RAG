@@ -47,7 +47,7 @@ function AiResponse({ content, State }: { content: string | undefined; State: bo
           },
           code: ({ node, className, children, ...props }: { node?: any; className?: string; children?: React.ReactNode;[key: string]: any }) => {
             return (
-              <div className="border rounded-md bg-[#292929] shadow-md p-4 my-4 overflow-auto">
+              <div className="border rounded-md bg-[#292929] shadow-md p-4 my-4 overflow-x-auto">
                 <pre className="whitespace-pre-wrap break-words font-mono text-sm">
                   <code className={className} {...props}>
                     {children}

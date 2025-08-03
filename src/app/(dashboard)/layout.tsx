@@ -27,7 +27,6 @@ export default function RootLayout({
           <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
-            <SessionProvider>
               <div className="w-full h-full flex">
                 <SidebarProvider>
                 <AppSidebar/>
@@ -37,7 +36,6 @@ export default function RootLayout({
                 </div>
                 </SidebarProvider>
               </div>
-            </SessionProvider>
           </body>
         </html>
     );

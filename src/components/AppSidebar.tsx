@@ -103,7 +103,7 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                     <ChatNameSkeleton />
                   </div>
                 ) : isAuthenticated ? (
-                  <div className="group-data-[collapsible=icon]:hidden text-white">
+                  <div className="group-data-[collapsible=icon]:hidden text-white overflow-y-hidden">
                     <SidebarGroupLabel className="pb-4 pt-8 text-base text-gray-400">Chats</SidebarGroupLabel>
                     <SidebarGroupContent>
                       <SidebarMenu>

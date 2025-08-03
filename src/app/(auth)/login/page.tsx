@@ -2,13 +2,13 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Sparkles, Brain, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { signIn } from "next-auth/react"
+import { signIn, SignInResponse } from "next-auth/react"
 
 const page = () => {
   const [issubmitting, setissubmitting] = useState(false)
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
+    identifier: '',
     password: '',
   });
   const router=useRouter()
@@ -20,27 +20,29 @@ const page = () => {
     });
   };
   
-  // const handleSubmit =async () => {
-  //   // Handle form submission logic here
-  //   console.log('Form submitted:', formData);
-  //   if (!isLoaded) return
-  //   // Start the sign-in process using the email and password provided
-  //   try {
-  //     setissubmitting(true)
-  //     const signInAttempt = await signIn.create({
-  //       identifier: formData.email,
-  //       password: formData.password,
-  //     })
-  //     if (signInAttempt.status === 'complete') {
-  //       await setActive({ session: signInAttempt.createdSessionId })
-  //       router.push('/')
-  //     } else {
-  //       console.error(JSON.stringify(signInAttempt, null, 2))
-  //     }
-  //   } catch (err: any) {
-  //     console.error(JSON.stringify(err, null, 2))
-  //   }
-  // };
+  const handleSubmit =async () => {
+    console.log('Form submitted:', formData);
+    try {
+      setissubmitting(true)
+      const signInAttempt = await signIn('credentials',{
+        identifier:formData.identifier,
+        password:formData.password,
+        redirect: false,
+        callbackUrl: '/',
+      }) as SignInResponse;
+      console.log(signInAttempt)
+      if (signInAttempt?.status===200) {
+        setissubmitting(false)
+        router.push('/')
+      } else {
+        console.error(JSON.stringify(signInAttempt, null, 2))
+        setissubmitting(false)
+      }
+    } catch (err: any) {
+      console.error(JSON.stringify(err, null, 2))
+      setissubmitting(false)
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center p-4">
@@ -79,8 +81,8 @@ const page = () => {
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type="email"
-                  name="email"
-                  value={formData.email}
+                  name="identifier"
+                  value={formData.identifier}
                   onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your email"
@@ -126,7 +128,7 @@ const page = () => {
             {/* Submit Button */}
             <button
               type="button"
-              // onClick={}
+              onClick={handleSubmit}
               className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 px-4 rounded-xl font-medium flex items-center justify-center space-x-2 hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl group"
             >
                             
