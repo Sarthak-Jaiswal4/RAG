@@ -6,7 +6,7 @@ function ChatSkeleton() {
     return (
         <>
             {Array.from({ length: 4 }).map((_, idx) => (
-                <div
+                <div key={idx}
                     className={`flex md:w-full w-[80%]  flex-col gap-4 space-x-4 ${
                         idx % 2 == 0 ? 'items-start' : 'items-end'
                     }`}

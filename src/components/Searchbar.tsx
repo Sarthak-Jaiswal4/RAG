@@ -39,8 +39,8 @@ const functions = [
 
 type FunctionType = { title: string | undefined; icon: any | null };
 
-function Searchbar({ className,search,dosearch }: props) {
-  const searchboxref=useRef<HTMLTextAreaElement>(null)
+function Searchbar({ className,search }: props) {
+  const searchboxref=useRef<HTMLTextAreaElement | null>(null)
   const [WhichFunction, setWhichFunction] = useState<FunctionType>({ title :'Chat', icon: MessageCircle });
   const [query, setquery] = useState("")
   const [containerHeight, setContainerHeight] = useState(120)
@@ -64,13 +64,12 @@ function Searchbar({ className,search,dosearch }: props) {
       type: WhichFunction.title
     };
     console.log(payload);
-    search?.(payload)
-    dosearch?.(payload)
-    reset()
     setContainerHeight(120);
     if (searchboxref.current) {
       searchboxref.current.style.height = 'auto';
     }
+    search?.(payload)
+    reset()
   };
 
   const handlefocus=()=>{
@@ -101,7 +100,10 @@ function Searchbar({ className,search,dosearch }: props) {
               className={
                 `w-full box-border resize-none overflow-y-auto rounded outline-none text-base ${className}`
               }
-              ref={searchboxref}
+              ref={(e)=>{
+                register("query").ref(e);
+                searchboxref.current = e;
+              }}
               rows={1}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {

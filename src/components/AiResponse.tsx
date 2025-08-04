@@ -5,6 +5,8 @@ import remarkGfm from 'remark-gfm';
 import { Button } from './ui/button';
 import { Paperclip } from 'lucide-react';
 import LinkDialogue from './LinkDialogue';
+import type { BundledLanguage } from 'shiki'
+import { createHighlighter } from "shiki";
 
 function AiResponse({ content, State }: { content: string | undefined; State: boolean }) {
   if (!content) return null;
@@ -47,11 +49,12 @@ function AiResponse({ content, State }: { content: string | undefined; State: bo
           },
           code: ({ node, className, children, ...props }: { node?: any; className?: string; children?: React.ReactNode;[key: string]: any }) => {
             return (
-              <div className="border rounded-md bg-[#292929] shadow-md p-4 my-4 overflow-x-auto">
+              <div className="border rounded-md bg-[#111111] shadow-md p-4 my-4 overflow-x-auto">
                 <pre className="whitespace-pre-wrap break-words font-mono text-sm">
                   <code className={className} {...props}>
                     {children}
                   </code>
+                  {/* <CodeBlock code={String(children)} lang="ts" /> */}
                 </pre>
               </div>
             );
@@ -80,6 +83,29 @@ function AiResponse({ content, State }: { content: string | undefined; State: bo
       </ReactMarkdown>
       {State && <Button variant='secondary' className='bg-[#202020] text-white font-normal rounded-2xl hover:bg-[#292929] hover:cursor-pointer'>Sources</Button>}
     </>
+  );
+}
+
+interface CodeBlockProps {
+  code: string;
+  lang?: string;
+}
+
+ async function CodeBlock({ code, lang = "ts" }: CodeBlockProps) {
+  const highlighter = await createHighlighter({
+    themes: ["github-dark"],
+    langs: ['javascript'],
+  });
+  const codes = highlighter.codeToHtml('const a = 1', {
+    lang: 'javascript',
+    theme: 'nord'
+  })
+
+  return (
+    <div
+      className="shiki"
+      dangerouslySetInnerHTML={{ __html: codes }}
+    />
   );
 }
 

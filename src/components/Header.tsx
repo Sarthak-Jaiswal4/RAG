@@ -55,7 +55,7 @@ function Header({ className }: props) {
 
   return (
     <>
-      <div className={`w-full h-[80px] md:h-auto px-4 flex flex-row items-center py-4 backdrop-blur-md ${className}`}>
+      <div className={`w-full h-[70px] md:h-[60px] px-4 flex flex-row items-center py-4 backdrop-blur-md ${className}`}>
         
           <div className='flex justify-between items-center w-full h-full backdrop-blur-md'>
             <div className='flex items-center backdrop-blur-md rounded-xl px-2 py-1'>
