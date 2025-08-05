@@ -7,10 +7,11 @@ import { NextResponse } from "next/server"
 await DBconnection()
 export async function POST(request:Request){
     try {
-        const { role, content,sessionname } = await request.json() as {
+        const { role, content,sessionname,sourceList } = await request.json() as {
             role: string;
             content: string;
-            sessionname:string
+            sessionname:string;
+            sourceList?:string[]
         };
 
         const session = await auth()
@@ -25,9 +26,10 @@ export async function POST(request:Request){
         }
 
         if (typeof content === "string") {
-            let Usermessage:{role:string,content:string} = {
+            let Usermessage:{role:string,content:string,sourceList?:Array<string>} = {
                 role,
-                content
+                content,
+                sourceList
             };
             const updateMessage=await UpdateUserMessage(user._id,sessionname,Usermessage)
             console.log("message updated")

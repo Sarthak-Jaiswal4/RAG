@@ -7,11 +7,24 @@ import { Paperclip } from 'lucide-react';
 import LinkDialogue from './LinkDialogue';
 import type { BundledLanguage } from 'shiki'
 import { createHighlighter } from "shiki";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import SourcesList from './SourcesList';
+import { nullable } from 'zod';
 
-function AiResponse({ content, State,sources }: { content: string | undefined; State: boolean, sources:Array<string> }) {
+function AiResponse({ content, State,sources }: { content: string | undefined; State: boolean, sources?:Array<string> }) {
   if (!content) return null;
   const allURLS = []  
-  console.log(sources)
   return (
     <>
       <ReactMarkdown
@@ -82,7 +95,19 @@ function AiResponse({ content, State,sources }: { content: string | undefined; S
       >
         {content}
       </ReactMarkdown>
-      {State && <Button variant='secondary' className='bg-[#202020] text-white font-normal rounded-2xl hover:bg-[#292929] hover:cursor-pointer'>Sources</Button>}
+      {sources && (sources?.length>1)
+      ?
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button className='dark rounded-2xl cursor-pointer' variant="secondary"><span><Paperclip
+            className="size-4 inline-block"
+          /></span> Sources</Button>
+        </SheetTrigger>
+        <SourcesList SourceList={sources} />
+      </Sheet>
+      :
+      null
+      }
     </>
   );
 }

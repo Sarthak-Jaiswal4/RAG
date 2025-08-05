@@ -45,6 +45,7 @@ function Searchbar({ className,search,dosearch }: props) {
   const [query, setquery] = useState("")
   const [containerHeight, setContainerHeight] = useState(120)
   const { register, handleSubmit,reset } = useForm();
+  const forumfocus=useRef<HTMLTextAreaElement>(null)
 
   const handleInput = (e:any) => {
     const textarea = e.target;
@@ -79,11 +80,16 @@ function Searchbar({ className,search,dosearch }: props) {
     }, 300);
   }
 
+  const formfocus=()=>{
+    searchboxref.current?.focus()
+  }
+
   return (
     <div className={` w-full flex justify-center items-center text-white mb-6 border-0 `}>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="w-full flex justify-center items-center overflow-y-visible"
+          onClick={formfocus}
         >
           <div
             className="w-[98%] sm:w-[50vw] md:w-[75vw] lg:w-190 bg-[#303030]/50 backdrop-blur-md border-2 shadow-xl border-gray-400 rounded-3xl p-4 flex flex-col justify-between"

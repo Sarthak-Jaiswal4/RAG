@@ -19,6 +19,28 @@ export default function Home() {
     createdAt:""
   })
 
+  const upload = async (role: string, content: string,sessionname:string): Promise<void>  => {
+    try {
+      const response = await axios.post('/api/updatemessageandmemory', {
+        role,
+        content,
+        sessionname,
+      });
+  
+      if (response.data.status===404) {
+        console.error(response.data.response)
+        throw new Error('Failed to update message and memory');
+      }
+      if (response.data.status===200) {
+        console.log('message uploaded successfully')
+      }
+      return
+    } catch (error) {
+      console.error('Error uploading message and memory:', error);
+      throw error;
+    }
+  }
+
   const firstquery=async(payload:formvalues)=>{
     try {
       await axios.post("/api/extractName",{data:payload.query}).then((r) => { 
@@ -32,9 +54,10 @@ export default function Home() {
           createdAt:"9876"
         }
         setchatsessionupdate(newquery)
+        upload("human",payload.query,r.data.response.chatid)
         sessionStorage.setItem(
           "initialPayload",
-          JSON.stringify({ message: query, type: type })
+          JSON.stringify({ message: query, type: type, })
         );
         router.push(`/chat/${r.data.response.chatid}`)
 

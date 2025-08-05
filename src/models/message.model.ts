@@ -4,6 +4,7 @@ export type MessageRole = 'user' | 'assistant' | 'system';
 export interface MessageSchema extends Document{
     role:MessageRole ,
     content:string,
+    sourceList?:string[],
     timestamp:Date,
 }
 
@@ -16,6 +17,11 @@ export const Messageschema = new Schema<MessageSchema> ({
     content: {
       type: String,
       required: false
+    },
+    sourceList:{
+      type: [String],
+      required: false,
+      default:[]
     },
     timestamp: {
       type: Date,

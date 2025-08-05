@@ -42,9 +42,8 @@ export const StoreEmbedding=async(data:contentSchema[])=>{
     }
 }
 
-export const UpdateUserMessage = async (userid: any,sessionname:string, message: { role: string, content: string, timestamp?: Date }): Promise<any> => {
+export const UpdateUserMessage = async (userid: any,sessionname:string, message: { role: string, content: string, sourceList?:string[] ,timestamp?: Date }): Promise<any> => {
     try {
-        console.log(userid,sessionname)
         const response=await chatSessionModel.findByIdAndUpdate(
             sessionname
         ,{
@@ -52,6 +51,7 @@ export const UpdateUserMessage = async (userid: any,sessionname:string, message:
                 messages: {
                   role: message.role,
                   content: message.content,
+                  sourceList: message?.sourceList,
                   timestamp: message.timestamp ?? new Date(),
                 }
               }
