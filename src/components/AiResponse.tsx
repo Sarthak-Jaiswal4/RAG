@@ -8,9 +8,10 @@ import LinkDialogue from './LinkDialogue';
 import type { BundledLanguage } from 'shiki'
 import { createHighlighter } from "shiki";
 
-function AiResponse({ content, State }: { content: string | undefined; State: boolean }) {
+function AiResponse({ content, State,sources }: { content: string | undefined; State: boolean, sources:Array<string> }) {
   if (!content) return null;
-  const allURLS = []
+  const allURLS = []  
+  console.log(sources)
   return (
     <>
       <ReactMarkdown

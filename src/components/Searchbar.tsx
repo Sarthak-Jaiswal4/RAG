@@ -39,7 +39,7 @@ const functions = [
 
 type FunctionType = { title: string | undefined; icon: any | null };
 
-function Searchbar({ className,search }: props) {
+function Searchbar({ className,search,dosearch }: props) {
   const searchboxref=useRef<HTMLTextAreaElement | null>(null)
   const [WhichFunction, setWhichFunction] = useState<FunctionType>({ title :'Chat', icon: MessageCircle });
   const [query, setquery] = useState("")
@@ -69,6 +69,7 @@ function Searchbar({ className,search }: props) {
       searchboxref.current.style.height = 'auto';
     }
     search?.(payload)
+    dosearch?.(payload)
     reset()
   };
 

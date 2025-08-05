@@ -25,7 +25,7 @@ async function QueryEmbedding(query: string,type?:string): Promise<string | unde
     const sembedding = await SparseRetrieveQuery(query,type);
     const result = await mergeRetrieval(dembedding, sembedding);
     console.log(result)
-    const answer = await answerwithollama(query, result,type);
+    const answer = await answerwithollama(query, result,type); 
     return answer;
   } catch (error) {
     console.log("error in querying", error);
@@ -164,17 +164,22 @@ async function mergeRetrieval(dembedding: any[],sembedding: any[]): Promise<any[
 
 async function answerwithollama(userquery: string,result: any[],type?:string): Promise<any> {
 
-  const sourceList = result
-  .map((chunk, i) => `${i + 1}. ${chunk.metadata.url}`)
-  .join('\n')
+  const allUrls = result.map(chunk => chunk.metadata.url);
 
-const chunkList = result
-  .map(
-    (chunk, i) =>
-      `[${i + 1}] ${chunk.densetext || chunk.sparsetext}`
-  )
-  .join('\n\n')
-  const DeepSearchprompt = `
+  const uniqueUrls = Array.from(new Set(allUrls));
+
+  const sourceList = uniqueUrls
+    .map((url, i) => `${i + 1}. ${url}`)
+    .join('\n');
+
+  const chunkList = result
+    .map(
+      (chunk, i) =>
+        `[${i + 1}] ${chunk.densetext || chunk.sparsetext}`
+    )
+    .join('\n\n')
+  console.log(sourceList,chunkList)
+  const DeepSearchprompt = `  
      You are an expert research assistant. Your job is to take a user's research question and a set of relevant retrieved passages (or embeddings + their corresponding text snippets), then synthesize a thorough, graduate-level research summary and analysis.
    
     SOURCES:
@@ -240,33 +245,33 @@ const chunkList = result
      `;
 
   const chatprompt = `
-  You are a friendly, knowledgeable AI assistant. Use only the retrieved context below to answer the user’s question in a conversational style, providing a thorough yet concise explanation. You may include bullet points or a small table to clarify key points. Cite any references to the context with “(Document 1)”, “(Doc 2)”, etc. If the context doesn’t contain enough information, respond: “I’m sorry, I don’t have enough information here to answer that.”
+  You are a friendly, knowledgeable AI assistant.  Answer the user’s question in a conversational style, using the retrieved context below as your primary source.  Follow these rules:
 
-    SOURCES:
-    ${sourceList}
+1. **Base every factual claim on the retrieved context.**  
+   - Cite each reference as “(Document 1)”, “(Document 2)”, etc., and replace those tags with the corresponding URL from the SOURCES list.
 
-    CONTEXT:
-    ${chunkList}
+2. **Supplement with your own knowledge only when appropriate.**  
+   - If the question is about general, evergreen topics (history, science fundamentals, definitions, biographies of well-known figures, etc.) and you *confidently* know additional reliable facts, you **may** add them—clearly marked with “(Model knowledge)”.  
+   - **Do not** add any supplementary information if the question concerns breaking news, ongoing events, or anything that may have changed since your last training cutoff; in those cases, rely *strictly* on the retrieved context.
 
-    USER QUESTION:
-    “${userquery}”
+3. **Handle gaps gracefully.**  
+   - If the context doesn’t contain enough information and you have no safe external knowledge, respond:  
+     > “I’m sorry, I don’t have enough information here to answer that.”
 
-   ### Requirements:
-    - **Style:** Natural, conversational.
-    - **Extras:** You may add a small table or a few bullet points for clarity, but keep it very brief.
-    - Citations: Whenever you reference a chunk, append its URL in brackets.  
-      For example: “They increased security levels after the conflict [1].”  
-      The model should then substitute “[1]” with “[https://…]” from the SOURCES list above.
+4. **Formatting extras:**  
+   - You may include a brief bullet list or a small table to clarify key points, but keep it very concise.
 
-    ### Example:
-    **User:** What are the three primary colors?  
-    **Assistant:** The three primary colors are red, blue, and yellow.  
-    - **Primary Colors Table:**  
-      | Color  | Example Use     |  
-      |--------|-----------------|  
-      | Red    | Stop signs      |  
-      | Blue   | Skies           |  
-      | Yellow | Warning labels  |
+---
+
+**SOURCES:**  
+${sourceList}
+
+**CONTEXT:**  
+${chunkList}
+
+**USER QUESTION:**  
+“${userquery}”
+
   `;
 
   let prompt;
@@ -281,7 +286,11 @@ const chunkList = result
     console.log("\n✅ Response from LLM Model:");
     console.log(response.response_metadata);
     console.log(response.content);
-    return response.content;
+    const result={
+      response,
+      uniqueUrls
+    }
+    return result;
   } catch (error) {
     console.error("Error getting response from LLM Model:", error);
     return "Sorry, I encountered an error while trying to answer your question.";

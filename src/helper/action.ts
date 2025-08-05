@@ -18,9 +18,9 @@ export const DoWebSearch=async(decision:string,confidence:number,query:string,ty
     try {
         if(decision=="ANSWER" && confidence>=6 && type!='Web Search' && type!='Deep Research'){
             console.log('LLM responding to query...')
-            const resp=await webSearch.DoChat(query)
-            console.log(resp)
-            return resp
+            const answer=await webSearch.DoChat(query)
+            console.log(answer)
+            return {answer}
         }
         else{
             console.log('LLM performing web search...')
@@ -30,7 +30,7 @@ export const DoWebSearch=async(decision:string,confidence:number,query:string,ty
                     const reQueryStr=await webSearch.QueryRewriting(query)
                     const allURLs=await webSearch.DeepSearchGetlinks(reQueryStr)
                     const saved=await ExtractingInfo.ExtractingCleanHTML(allURLs)
-                    const response= await RetriveFromDb(query,type)
+                    const response:any= await RetriveFromDb(query,type)
                     // console.log(response)
                     return response 
                 } catch (error:any) {
@@ -42,8 +42,8 @@ export const DoWebSearch=async(decision:string,confidence:number,query:string,ty
                 console.log("performing normal search")
                 const urls=await webSearch.DoWebSearch(query,type)
                 const saved=await ExtractingInfo.ExtractingCleanHTML(urls)
-                const response= await RetriveFromDb(query,type)
-                // console.log(response)
+                const response:any= await RetriveFromDb(query,type)
+                console.log(response)
                 return response 
             } catch (error:any) {
                 console.log('Error in performing web search',error)
@@ -57,9 +57,11 @@ export const DoWebSearch=async(decision:string,confidence:number,query:string,ty
 
 export const RetriveFromDb=async(query:string,type?:string)=>{
     try {
-        const reponse=await querySearching.QueryEmbedding(query,type)
-        if(reponse){
-            return reponse
+        const response:any=await querySearching.QueryEmbedding(query,type)
+        if(response){
+            const answer=response?.response?.content
+            const sourceList=response.uniqueUrls
+            return {answer,sourceList}
         }
     } catch (error:any) {
     throw new Error('Error in Retrieval from DB', error)

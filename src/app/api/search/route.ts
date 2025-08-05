@@ -11,7 +11,11 @@ export async function POST(request:Request){
         };
 
         const response= await DoWebSearch(decision,confidence,query,type)
-        return NextResponse.json({status:200,response:response})
+        if(response.sourceList){
+            return NextResponse.json({status:200,response:response.answer,SourceList:response.sourceList})
+        }else{
+            return NextResponse.json({status:200,response:response.answer})
+        }
 
     } catch (error:any) { 
         console.log('Error in search API',error)
