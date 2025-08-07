@@ -25,8 +25,8 @@ function SourcesList({SourceList}:{SourceList:Array<string>}) {
     </SheetHeader>
     <div className="flex justify-center flex-col px-3 gap-2">
         {SourceList.map(e =>(
-        <div className="flex py-2 px-2 bg-[#313131] rounded-2xl border-1 flex-wrap text-wrap    ">
-            <p className='text-wrap px-2'>{e}</p>
+        <div className="flex py-2 px-2 bg-[#313131] rounded-2xl border-1 flex-wrap text-wrap">
+            <a href={e} className='text-wrap px-2'>{e}</a>
         </div>
         ))}
     </div>

@@ -15,10 +15,10 @@ export async function POST(request:Request){
         if(!user){
           throw new Error("No user found")
         }
-        // const ispassword= await bcrypt.compare(password,user?.password)
-        // if(!ispassword){
-        //   throw new Error("Incorrect Password")
-        // }
+        const ispassword= await bcrypt.compare(password,user?.password)
+        if(!ispassword){
+          throw new Error("Incorrect Password")
+        }
         const safeUser = {
           id:         user._id.toString(),
           email:      user.email,

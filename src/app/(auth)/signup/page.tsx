@@ -3,12 +3,11 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Sparkles, Brain, CheckCircle, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/components/ui/input-otp';
-import { signIn } from 'next-auth/react';
+import { signIn, SignInResponse } from 'next-auth/react';
 import axios from 'axios';
 
 const AuthPages = () => {
   const [verify, setverify] = useState(false)
-  const [isloading, setisloading] = useState(false)
   const [issubmitting, setissubmitting] = useState(false)
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -22,16 +21,20 @@ const AuthPages = () => {
 
   const handleSubmit = async() => {
     // Handle form submission logic here
-    if (!isloading) return
     if(formData.password!=formData.confirmPassword) return
     console.log('Form submitted:', formData);
     try {
       setissubmitting(true)
-      const user=await axios.post('/api/signUp',{
+      const user=await axios.post('/api/signIn',{
         ...formData
       })
-      if(user.data.status===200){
-        sessionStorage.setItem("verifycode",JSON.stringify({ userId:user.data.user._id , email:user.data.user.email  }))
+
+      if(user.data.status==200){
+        sessionStorage.setItem("verifycode",JSON.stringify({ userId:user.data.createdUser._id , email:user.data.createdUser.email  }))
+        const sendemail= await axios.post('/api/send',{
+          email:formData.email,
+          verificationCode:user.data.createdUser.verificationcode
+        })
         setverify(true)
         router.push('/verify')
       }

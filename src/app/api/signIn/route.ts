@@ -4,19 +4,24 @@ import userModel from "@/models/user.model"
 
 export async function POST(request:Request){
     try {
-        const {username,email,password}=await request.json()
+        const {name,email,password}=await request.json()
 
-        if(!username || !email || ! password){
+        if(!name || !email || !password){
             console.log('Missing credential')
             return NextResponse.json({status:404,message:"Error Missing credential"})
         }
 
         const hashedpassword=await bcrypt.hash(password,10)
+        const verificationcode= Math.floor(100000 + Math.random()* 900000).toString()
+        const ExpiryTime= new Date()
+        ExpiryTime.setMinutes(ExpiryTime.getMinutes() + 10)
 
         const createdUser=await userModel.create({
-            username,
+            username:name,
             email,
-            password:hashedpassword
+            password:hashedpassword,
+            verificationcode,
+            ExpiryTime
         })
 
         if(!createdUser){

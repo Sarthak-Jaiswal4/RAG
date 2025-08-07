@@ -77,8 +77,8 @@ export default function Home() {
       <div className="w-full h-screen flex flex-col justify-center items-center">
         <Header/>
         <div className="flex justify-center items-center text-center md:pt-0 pt-20 flex-col w-full h-full">
-          {isAuthenticated ? <h1 className="md:text-[3vw] text-[8.5vw] font-semibold">Hello {session?.user?.name}</h1> : null}
-          <h1 className="flex justify-center items-center md:text-[2vw] text-[6vw] text-medium text-wrap text-center">Let's explore your questions together!</h1>
+          {isAuthenticated ? <h1 className="md:text-[2.5vw] text-[8.5vw] font-semibold">Hello {session?.user?.name}</h1> : null}
+          <h1 className="flex justify-center items-center md:text-[1.75vw] text-[6vw] text-medium text-wrap text-center">Let's explore your questions together!</h1>
         </div>
         <div className="w-full h-full flex flex-col justify-end items-center">
           <Searchbar dosearch={firstquery}/>

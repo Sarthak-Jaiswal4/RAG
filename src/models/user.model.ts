@@ -1,5 +1,6 @@
 import mongoose,{Schema,Document} from "mongoose";
 import chatSessionModel, { ChatSession } from "./chat.model";
+import { string } from "zod";
 
 export interface User extends Document {
     username:string,
@@ -8,6 +9,8 @@ export interface User extends Document {
     chats:ChatSession[],
     profilepic?:string,
     isverified:boolean,
+    verificationcode:string,
+    ExpiryTime:Date
     // id?:string
 }
 
@@ -23,7 +26,7 @@ const UserSchema:Schema<User>=new Schema ({
     email:{
         type:String,
         required:[true,'email is required'],
-        unique:true,
+        // unique:true,
         match:[/.+\@.+\..+/,"please use a valid email address"]
     },
     password:{
@@ -33,6 +36,12 @@ const UserSchema:Schema<User>=new Schema ({
     isverified:{
         type:Boolean,
         default:false,
+    },
+    verificationcode:{
+        type:String,
+    },
+    ExpiryTime:{
+        type: Date
     },
     chats: [{ type: Schema.Types.ObjectId, ref: "chatsession", default: [] }]
 })

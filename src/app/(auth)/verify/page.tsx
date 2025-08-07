@@ -4,6 +4,7 @@ import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/comp
 import { ArrowRight, Brain, CheckCircle, RefreshCw, Sparkles } from 'lucide-react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { signIn, SignInResponse } from 'next-auth/react';
 
 interface storage{
     userId:string,
@@ -23,17 +24,19 @@ function page() {
             sessionStorage.removeItem('verifycode')
         }
     }, [])
-    
+    console.log(Storage)
 
     const handleVerify = async () => {
-        if (!isloading) return
         if (code.length !== 6) return;
         console.log('Verification code:', code);
         try {
           setisloading(true)
-          const signUpAttempt = await axios.post('/api/verifycode',{
+          const signUpAttempt = await axios.post('/api/verifyCode',{
             code,id:Storage.userId
           })
+          if(signUpAttempt.data.status==200){
+            router.push("/login")
+          }
         } catch (error:any) {
           console.log("Error in verifying code in Signup",error)
           setisloading(false)
