@@ -20,7 +20,7 @@ export async function POST(request:Request) {
         })
     }
     const { data, error } = await resend.emails.send({
-      from: 'Acme <onboarding@resend.dev>',
+      from: 'Prarambh',
       to: `${email}`,
       subject: 'verification code',
       react: AWSVerifyEmail({ verificationCode: verificationCode }),
