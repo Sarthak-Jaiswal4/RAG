@@ -5,6 +5,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import Header from "@/components/Header";
 import { SessionProvider } from 'next-auth/react';
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
               <div className="w-full h-full flex">
                 {children}
               </div>
+              <Analytics />
             </SidebarProvider>
         </body>
       </html>
