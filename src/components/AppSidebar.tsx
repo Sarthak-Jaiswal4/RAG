@@ -3,12 +3,12 @@ import { Sidebar, SidebarContent, SidebarMenuItem, SidebarMenuButton, SidebarMen
 import { ChevronUp, MoreHorizontal, Plus, Search, Trash2, User2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { useSidebar } from "@/components/ui/sidebar"
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { chatsessiontype } from "@/types/chatsessiontype"
 import axios from "axios"
 import { useState } from "react";
 import ErrorDialogue from "./ErrorDialogue"
-import { useParams } from "next/navigation"
+import { useParams, usePathname } from "next/navigation"
 import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
@@ -38,6 +38,9 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
   const chatid=useParams()
   const router=useRouter()
   const { data: session, status } = useSession();
+  const [deleteaction, setdeleteaction] = useState(false)
+  const [chatID, setchatID] = useState("")
+  const pathname = usePathname()
 
   const getchats = async () => {
     try {
@@ -61,6 +64,34 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
     }
   }
 
+  const DeleteChat=async()=>{
+    try {
+      await axios.post('/api/deletechat',{chatid:chatID})
+      .then((e)=>{
+        if(e.data.status==200){
+          setShowDeleteDialog(false)
+          if(pathname === '/'){
+            router.refresh()
+          }else{
+            router.push('/')
+          }
+        }else{
+          setShowDeleteDialog(false)
+          console.log('Something went wrong',e.data)
+        }
+      })
+      .catch((err)=>{
+        console.log('Error in deleting chat',err)
+      })
+      .finally(()=>{
+        setChats(prev => prev.filter(c => c.id != chatID));
+      })
+    } catch (error:any) {
+      console.log('Error in deleting chat')
+      throw new Error(error)
+    }
+  }
+
   useEffect(() => {
     if (chatsession && chatsession.url !== "") {
       setChats(prevChats => [chatsession, ...prevChats])
@@ -68,6 +99,13 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
     setOpen(false)
     getchats()
   }, [chatsession])
+
+  useEffect(() => {
+    if(deleteaction==true){
+      DeleteChat()
+    }
+  }, [deleteaction])
+  
 
   // Memoize session status to prevent unnecessary re-renders
   const isAuthenticated = useMemo(() => status === "authenticated", [status])
@@ -124,7 +162,7 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                               <DropdownMenuContent className="dark" side="right" align="start">
                                 <DropdownMenuItem className='pb-2 flex hover:bg-red-600' onClick={() => setShowDeleteDialog(true)}>
                                   <Trash2 className='text-red-400 size-5' />
-                                  <h1 className='text-red-400 px-1'>
+                                  <h1 onClick={()=> setchatID(item.id)} className='text-red-400 px-1'>
                                     Delete
                                   </h1>
                                 </DropdownMenuItem>
@@ -189,9 +227,7 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
           desc='Are you sure you want to permanently delete the current chat? This action cannot be undone and all messages in this conversation will be lost.'
           type='delete'
           window={setShowDeleteDialog}
-          action={() => {
-            // Handle delete action
-          }}
+          action={setdeleteaction}
         />
       )}
     </>

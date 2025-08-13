@@ -43,25 +43,34 @@ export default function Home() {
 
   const firstquery=async(payload:formvalues)=>{
     try {
-      await axios.post("/api/extractName",{data:payload.query}).then((r) => { 
-        console.log(r.data.response)
-        const query=payload.query
-        const type=payload.type as string
-        const newquery={
-          id:r.data.response.chatid,
-          title:r.data.response.extractedName,
-          url:`/chat/${r.data.response.chatid}`,
-          createdAt:"9876"
-        }
-        setchatsessionupdate(newquery)
-        upload("human",payload.query,r.data.response.chatid)
+      if(isAuthenticated){
+        await axios.post("/api/extractName",{data:payload.query}).then((r) => { 
+          console.log(r.data.response)
+          const query=payload.query
+          const type=payload.type as string
+          const newquery={
+            id:r.data.response.chatid,
+            title:r.data.response.extractedName,
+            url:`/chat/${r.data.response.chatid}`,
+            createdAt:"9876"
+          }
+          setchatsessionupdate(newquery)
+          upload("human",payload.query,r.data.response.chatid)
+          sessionStorage.setItem(
+            "initialPayload",
+            JSON.stringify({ message: query, type: type, })
+          );
+          router.push(`/chat/${r.data.response.chatid}`)
+  
+        }).catch(err => console.log("error in extracting name API call",err))
+      }
+      else{
         sessionStorage.setItem(
           "initialPayload",
-          JSON.stringify({ message: query, type: type, })
+          JSON.stringify({ message: payload.query, type: payload.type, })
         );
-        router.push(`/chat/${r.data.response.chatid}`)
-
-      }).catch(err => console.log("error in extracting name API call",err))
+        router.push(`/chat/temp`)
+      }
 
     } catch (error:any) {
       console.log('Error in creating first chat')
@@ -76,7 +85,7 @@ export default function Home() {
       <AppSidebar chatsession={chatsessionupdate}/>
       <div className="w-full h-screen flex flex-col justify-center items-center">
         <Header/>
-        <div className="flex justify-center items-center text-center pb-[6vw] gap-8 flex-col w-full h-full">
+        <div className="flex justify-center items-center text-center pb-[6.5vw] gap-8 flex-col w-full h-full">
           {/* {isAuthenticated ? <h1 className="md:text-[2.5vw] text-[8.5vw] font-semibold">Hello {session?.user?.name}</h1> : null} */}
           <div className="flex flex-col">
             <h1 className="flex justify-center items-center md:text-[3rem] font-poppins font-semibold text-[2.75rem] text-wrap text-center" >Lamda</h1>

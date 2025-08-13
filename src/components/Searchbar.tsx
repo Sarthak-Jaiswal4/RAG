@@ -175,6 +175,7 @@ function Searchbar({ className,search,dosearch }: props) {
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                
               </div>
               <Button variant="ghost" type="submit" className="rounded-3xl">
                 <SendHorizonal />

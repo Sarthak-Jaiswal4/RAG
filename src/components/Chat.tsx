@@ -7,6 +7,8 @@ import { shoudldosearch } from '@/helper/action'
 import AiResponse from './AiResponse'
 import ErrorDialogue from './ErrorDialogue'
 import ChatSkeleton from './ChatSkeleton'
+import { useSession } from 'next-auth/react'
+import SignUpPopup from './SignUp'
 
 interface props {
     className?:string,
@@ -105,103 +107,150 @@ function Chat({className,query,firstchat}:props) {
   const [State, setState] = useState("Analysing")
   const [isSearching, setIsSearching] = useState(false)
   const [message, setMessage] = useState<messagetype[]>([])
-  const [error, seterror] = useState<string>("")
   const firstChatProcessed = React.useRef(false)
-  const [prevmsg, setprevmsg] = useState<string>("")
-  const [errorwindow, seterrorwindow] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   const [Sourcelist, setSourcelist] = useState<Array<string>>([])
   const sessionname=firstchat.sessionname
+  const [Signuppopup, setSignuppopup] = useState(false)
+  const {data:session,status}=useSession()
+
+  const authorized=useMemo(() => status==='authenticated' , [status])
 
   useEffect(() => {
-    // if((query.query== firstchat.query)){
-    //   seterror('You have entered the same query as your previous one. Please try a different question.');
-    //   seterrorwindow(true)
-    //   console.log('Error: You have entered the same query as your previous one.');
-    // }else
-     if(firstchat?.query && !firstChatProcessed.current) {
-      const processFirstChat = async () => {
-        firstChatProcessed.current = true
-        console.log("firstchat message",firstchat)
-        // Add human message to chat
-        try {
-          setMessage(e => [...e, {role:"human",content:firstchat.query}])
-          setprevmsg(firstchat.query)
-          // await upload("human",query.query,sessionname)
-          let shouldsearch
-          if(firstchat.type=="Web Search"){
-            setisweb(true)
-            setState("Searching web")
-            shouldsearch={
-              ...firstchat,confidence:10,decision:"SEARCH"
-            }
-            console.log('Regular query search:', shouldsearch)
-            const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
-            if(answer.aiResponse){
-              await upload("AI",answer.aiResponse,sessionname,answer.sourceList)
-            }
-          }else{
-            shouldsearch = await searchOrweb(firstchat, setIsSearching,setState,setisweb)
-            console.log('Regular query LLM:', shouldsearch)
-            //search query
-            const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
-            if(answer.aiResponse){
-              await upload("AI",answer.aiResponse,sessionname,answer.sourceList)
-            }
+    
+    const processFirstChat = async () => {
+      firstChatProcessed.current = true
+      console.log("firstchat message",firstchat)
+      // Add human message to chat
+      try {
+        setMessage(e => [...e, {role:"human",content:firstchat.query}])
+        // await upload("human",query.query,sessionname)
+        let shouldsearch
+        if(firstchat.type=="Web Search"){
+          setisweb(true)
+          setState("Searching web")
+          shouldsearch={
+            ...firstchat,confidence:10,decision:"SEARCH"
           }
-        } catch (error) {
-          console.error('Error processing first chat:', error)
-          setIsSearching(false)
+          console.log('Regular query search:', shouldsearch)
+          const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
+          if(answer.aiResponse){
+            await upload("AI",answer.aiResponse,sessionname,answer.sourceList)
+          }
+        }else{
+          shouldsearch = await searchOrweb(firstchat, setIsSearching,setState,setisweb)
+          console.log('Regular query LLM:', shouldsearch)
+          //search query
+          const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
+          if(answer.aiResponse){
+            await upload("AI",answer.aiResponse,sessionname,answer.sourceList)
+          }
         }
+      } catch (error) {
+        console.error('Error processing first chat:', error)
+        setIsSearching(false)
       }
-      
+    }
+
+    const Storetemp=async()=>{
+      try {
+        console.log(firstchat)
+        setMessage(e => [...e, {role:"human",content:firstchat.query}])
+        let shouldsearch
+        if(firstchat.type=="Web Search"){
+          setisweb(true)
+          setState("Searching web")
+          shouldsearch={
+            ...firstchat,confidence:10,decision:"SEARCH"
+          }
+          console.log('Regular query search:', shouldsearch)
+          const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
+        }else{
+          shouldsearch = await searchOrweb(firstchat, setIsSearching,setState,setisweb)
+          console.log('Regular query LLM:', shouldsearch)
+          //search query
+          const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
+        }
+      } catch (error:any) {
+        console.log('Error in storing temp data',error)
+        setIsSearching(false)
+      }
+    }
+
+    if(firstchat?.query && !firstChatProcessed.current && sessionname!="temp") {
       processFirstChat()
+    }else if(firstchat?.query && !firstChatProcessed.current && sessionname=='temp'){
+      Storetemp()
     }
   }, [firstchat])
 
   useEffect(() => {
-    if((query.query== firstchat.query)){
-      seterror('You have entered the same query as your previous one. Please try a different question.');
-      seterrorwindow(true)
-      console.log(error)
-    }else if(query.query && query.query !== firstchat?.query) {
-      const processQuery = async () => {
-        //update the human message in chat
-        try {
-          setMessage(e => [...e, {role:"human",content:query.query}])
-          setprevmsg(query.query)
-          //should search or think
-          await upload("human",query.query,sessionname)
-          let shouldsearch
-          if(query.type=="Web Search"){
-            setisweb(true)
-            setState("Searching web")
-            shouldsearch={
-              ...query,confidence:10,decision:"SEARCH"
-            }
-            console.log('Regular query search:', shouldsearch)
-            const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
-            console.log(answer)
-            if(answer.aiResponse){
-              await upload("AI",answer.aiResponse,sessionname,answer.sourceList)
-            }
-          }else{
-            shouldsearch = await searchOrweb(query, setIsSearching,setState,setisweb)
-            console.log('Regular query LLM:', shouldsearch)
-            //search query
-            const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
-            console.log(answer)
-            if(answer.aiResponse){
-              await upload("AI",answer.aiResponse,sessionname,answer.sourcelist)
-            }
+    const processQuery = async () => {
+      //update the human message in chat
+      try {
+        setMessage(e => [...e, {role:"human",content:query.query}])
+        //should search or think
+        await upload("human",query.query,sessionname)
+        let shouldsearch
+        if(query.type=="Web Search"){
+          setisweb(true)
+          setState("Searching web")
+          shouldsearch={
+            ...query,confidence:10,decision:"SEARCH"
           }
-        } catch (error) {
-          console.error('Error processing query:', error)
-          setIsSearching(false)
+          console.log('Regular query search:', shouldsearch)
+          const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
+          console.log(answer)
+          if(answer.aiResponse){
+            await upload("AI",answer.aiResponse,sessionname,answer.sourceList)
+          }
+        }else{
+          shouldsearch = await searchOrweb(query, setIsSearching,setState,setisweb)
+          console.log('Regular query LLM:', shouldsearch)
+          //search query
+          const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
+          console.log(answer)
+          if(answer.aiResponse){
+            await upload("AI",answer.aiResponse,sessionname,answer.sourcelist)
+          }
         }
+      } catch (error) {
+        console.error('Error processing query:', error)
+        setIsSearching(false)
       }
-      
+    }
+
+    const Storetemp=async()=>{
+      try {
+        console.log(query)
+        setMessage(e => [...e, {role:"human",content:query.query}])
+        let shouldsearch
+
+        if(query.type=="Web Search"){
+          setisweb(true)
+          setState("Searching web")
+          shouldsearch={
+            ...query,confidence:10,decision:"SEARCH"
+          }
+          console.log('Regular query search:', shouldsearch)
+          const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
+        }else{
+          shouldsearch = await searchOrweb(query, setIsSearching,setState,setisweb)
+          console.log('Regular query LLM:', shouldsearch)
+          //search query
+          const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
+        }
+      } catch (error:any) {
+        console.log('Error in storing temp data',error)
+        setIsSearching(false)
+      }
+    }
+
+    if(query.query && query.query !== firstchat?.query && sessionname!="temp") {
       processQuery()
+    }else if(query.query && query.query !== firstchat?.query && sessionname=='temp'){
+      console.log('Running temp')
+      Storetemp()
     }
   }, [query.query, firstchat?.query])
 
@@ -215,9 +264,9 @@ function Chat({className,query,firstchat}:props) {
         console.error(error);
       }
     };
-    fetchMessages();
-    // if(firstChatProcessed.current){
-    // }
+    if(authorized){
+      fetchMessages();
+    }
   }, [])
 
   useEffect(() => {
@@ -226,6 +275,7 @@ function Chat({className,query,firstchat}:props) {
 
   useEffect(() => {
     setIsMounted(true);
+    setSignuppopup(true)
   }, []);
 
   if (isMounted === false) {
@@ -263,14 +313,9 @@ function Chat({className,query,firstchat}:props) {
         )}
       </div>
     </div>
-    {/* {isMounted && error && errorwindow && (
-      <ErrorDialogue 
-        window={seterrorwindow}  
-        title="Error" 
-        desc={error} 
-        type='okay' 
-      />
-    )} */}
+    {Signuppopup && <SignUpPopup
+      window={setSignuppopup}
+    />}
     </>
   )
 }

@@ -73,7 +73,7 @@ function Header({ className }: props) {
               }
             </div>
             <div className='flex gap-3 items-center'>
-              {isChatPage && (
+              {isChatPage && isAuthenticated && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button className=' rounded-3xl border-0 cursor-pointer' variant="ghost">More</Button>
