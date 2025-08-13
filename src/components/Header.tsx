@@ -55,25 +55,28 @@ function Header({ className }: props) {
 
   return (
     <>
-      <div className={`w-full h-[70px] md:h-[60px] px-4 flex flex-row items-center py-4 backdrop-blur-md ${className}`}>
+      <div className={`w-full h-[60px] md:h-[60px] px-4 flex flex-row items-center py-4 md:backdrop-blur-none backdrop-blur-sm ${className}`}>
         
-          <div className='flex justify-between items-center w-full h-full backdrop-blur-md'>
-            <div className='flex items-center backdrop-blur-md rounded-xl px-2 py-1'>
-              <SidebarGroupContent className="sm:hidden flex sticky top-2 left-0 z-10 h-full backdrop-blur-md w-full py-2 inset-2">
+          <div className='flex justify-between items-center w-full h-full'>
+            <div className='flex items-center rounded-xl px-2 py-1'>
+              <SidebarGroupContent className="sm:hidden flex sticky top-2 left-0 z-10 h-full w-full py-2 inset-2">
                 <SidebarTrigger />
               </SidebarGroupContent>
+              {
+                isChatPage &&
               <h1
                 className='text-2xl font-normal cursor-pointer'
                 onClick={() => router.push('/')}
               >
-                Prarambh
+                Lamda
               </h1>
+              }
             </div>
             <div className='flex gap-3 items-center'>
               {isChatPage && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button className=' bg-[#292929] rounded-3xl border-0 cursor-pointer' variant="outline">More</Button>
+                    <Button className=' rounded-3xl border-0 cursor-pointer' variant="ghost">More</Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-full py-2 dark rounded-2xl dark flex flex-col justify-center items-center bg-[#252525] shadow-2xl/30 border-0">
                     <DropdownMenuItem className='pb-2 flex hover:bg-red-600 cursor-pointer' onClick={() => setShowDeleteDialog(true)}>
@@ -83,8 +86,8 @@ function Header({ className }: props) {
                       </h1>
                     </DropdownMenuItem>
                     <DropdownMenuItem className='cursor-pointer'>
-                      <Share className='text-white size-5' />
-                      <h1 className='text-white px-1'>
+                      <Share className='text-[#F4F1ED] size-5' />
+                      <h1 className='text-[#F4F1ED] px-1'>
                         Share
                       </h1>
                     </DropdownMenuItem>
@@ -92,8 +95,8 @@ function Header({ className }: props) {
                 </DropdownMenu>
               )}
               {isAuthenticated ? (
-                <div>
-                  <Button onClick={() => signOut()} className='px-3 py-3 rounded-3xl cursor bg-[#303030] border-0' variant='outline'>Sign Out</Button>
+                <div className='hidden'>
+                  <Button onClick={() => signOut()} className='px-3 py-3 rounded-3xl cursor border-0' variant='ghost'>Sign Out</Button>
                 </div>
               ) : (
                 <div>

@@ -27,7 +27,7 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <div className="w-full h-full flex">
-            <div className="w-full min-h-screen flex flex-col bg-[#171717] text-white relative">
+            <div className="w-full min-h-screen flex flex-col bg-[#171717] text-[#F4F1ED] relative">
               {/* <Header className='sticky top-0 z-10 backdrop-blur-[2px]' /> */}
               {children}
             </div>

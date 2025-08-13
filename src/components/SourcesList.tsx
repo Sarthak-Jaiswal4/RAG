@@ -16,7 +16,7 @@ import {
 
 function SourcesList({SourceList}:{SourceList:Array<string>}) {
   return (
-    <SheetContent className='dark text-white bg-[#272727]'>
+    <SheetContent className='dark text-[#F4F1ED] bg-[#272727]'>
     <SheetHeader>
       <SheetTitle className='text-2xl'>Sources</SheetTitle>
       <SheetDescription>

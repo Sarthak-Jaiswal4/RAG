@@ -24,7 +24,6 @@ function page() {
             sessionStorage.removeItem('verifycode')
         }
     }, [])
-    console.log(Storage)
 
     const handleVerify = async () => {
         if (code.length !== 6) return;
@@ -58,11 +57,11 @@ function page() {
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
               <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-3 rounded-2xl shadow-2xl">
-                <Brain className="w-8 h-8 text-white" />
+                <Brain className="w-8 h-8 text-[#F4F1ED]" />
               </div>
               <Sparkles className="w-6 h-6 text-blue-400 ml-2 animate-pulse" />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">
+            <h1 className="text-3xl font-bold text-[#F4F1ED] mb-2">
               Verify Your Account
             </h1>
             <p className="text-gray-400">
@@ -100,7 +99,7 @@ function page() {
               {/* Verify Button */}
               <button
                 onClick={handleVerify}
-                className={`w-full py-3 px-4 rounded-xl font-medium flex items-center justify-center space-x-2 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl group bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-700 hover:to-cyan-700
+                className={`w-full py-3 px-4 rounded-xl font-medium flex items-center justify-center space-x-2 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl group bg-gradient-to-r from-blue-600 to-cyan-600 text-[#F4F1ED] hover:from-blue-700 hover:to-cyan-700
                 `}
               >
                 {isloading ? (
@@ -168,7 +167,7 @@ function page() {
             <button
             onClick={()=> router.push('/signup')}
               type="button"
-              className="text-gray-400 hover:text-white text-sm transition-colors"
+              className="text-gray-400 hover:text-[#F4F1ED] text-sm transition-colors"
             >
               ← Back to Sign In
             </button>

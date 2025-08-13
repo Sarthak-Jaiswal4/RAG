@@ -20,7 +20,7 @@ function ErrorDialogue({ title, desc, type, window, action }: { title: string; d
 
     return (
         <div className='fixed inset-0 flex justify-center items-center z-50 bg-black/50 backdrop-blur-sm'>
-            <Card className="w-full flex gap-1 max-w-sm bg-[#252525] text-white dark shadow-2xl">
+            <Card className="w-full flex gap-1 max-w-sm bg-[#252525] text-[#F4F1ED] dark shadow-2xl">
                 <CardHeader>
                     <CardTitle className='text-md'>{title}</CardTitle>
                 </CardHeader>

@@ -30,7 +30,7 @@ export default function RootLayout({
               <div className="w-full h-full flex">
                 <SidebarProvider>
                 <AppSidebar/>
-                <div className="w-full min-h-screen flex flex-col bg-[#171717] text-white relative">
+                <div className="w-full min-h-screen flex flex-col bg-[#171717] text-[#F4F1ED] relative">
                   <Header className='sticky top-0 z-10' />
                   {children}
                 </div>

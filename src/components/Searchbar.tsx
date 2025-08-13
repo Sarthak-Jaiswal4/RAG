@@ -85,14 +85,14 @@ function Searchbar({ className,search,dosearch }: props) {
   }
 
   return (
-    <div className={` w-full flex justify-center items-center text-white mb-6 border-0 `}>
+    <div className={` w-full flex justify-center items-center text-[#F4F1ED] mb-6 border-0 `}>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="w-full flex justify-center items-center overflow-y-visible"
           onClick={formfocus}
         >
           <div
-            className="w-[98%] sm:w-[50vw] md:w-[75vw] lg:w-190 bg-[#303030]/50 backdrop-blur-md border-2 shadow-xl border-gray-400 rounded-3xl p-4 flex flex-col justify-between"
+            className="w-[98%] sm:w-[50vw] md:w-[75vw] lg:w-190 bg-[#303030]/50 backdrop-blur-md border-2 shadow-xl border-gray-500 rounded-3xl p-4 flex flex-col justify-between"
             style={{ 
               height: `${containerHeight}px`, 
               minHeight: '120px',
@@ -141,7 +141,7 @@ function Searchbar({ className,search,dosearch }: props) {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
-                      className=" bg-[#292929] border-0 rounded-3xl"
+                      className="bg-[#292929] text-[#E27D60] border-0 rounded-3xl"
                       variant="outline"
                     >
                       {WhichFunction.title == "" ? (
@@ -149,7 +149,7 @@ function Searchbar({ className,search,dosearch }: props) {
                       ) : (
                         <h1 className="flex gap-2 items-center">
                           <WhichFunction.icon />
-                          {WhichFunction.title}
+                          <span className="">{WhichFunction.title}</span>
                         </h1>
                       )}
                     </Button>

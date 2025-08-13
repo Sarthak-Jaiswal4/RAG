@@ -11,7 +11,7 @@ import ErrorDialogue from "./ErrorDialogue"
 import { useParams } from "next/navigation"
 import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import ChatNameSkeleton from "./ChatNameSkeleton"
 
 interface AppSidebarProps {
@@ -33,7 +33,7 @@ const items = [
 
 export function AppSidebar({ chatsession }: AppSidebarProps) {
   const [chats, setChats] = useState<chatsessiontype[]>([]);
-  const { setOpen } = useSidebar()
+  const { setOpen,open } = useSidebar()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const chatid=useParams()
   const router=useRouter()
@@ -75,20 +75,21 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
 
   return (
     <>
-      <Sidebar className="dark text-white border-r-2 bg-[#191919] border-gray-700 overflow-y-auto " collapsible="icon">
+      <Sidebar className={`dark text-[#F4F1ED] border-r-2 bg-[#191919] border-gray-700 overflow-y-auto w-64 transition-all duration-400 ease-in-out`} collapsible="icon">
         <SidebarContent className="bg-[#191919]">
           <SidebarGroup>
-            <SidebarGroupContent className="sticky top-2 left-0 z-10 h-full text-white bg-[#191919] w-full py-2 inset-2">
+            <SidebarGroupContent className="sticky top-2 left-0 z-10 h-full text-[#F4F1ED] bg-[#191919] w-full py-2 inset-2">
               <SidebarTrigger />
             </SidebarGroupContent>
-            <SidebarGroupContent className="pt-4 text-white">
+            <SidebarGroupContent className="pt-4 text-[#F4F1ED]">
               <SidebarMenu>
                 {items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <a href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
+                  <SidebarMenuItem className="hover:bg-[#242424] rounded-xl" key={item.title}>
+                    <SidebarMenuButton className=" hover:bg-[#242424] hover:text-[#F4F1ED]"  asChild>
+                      <a className="hover:bg-[#242424]" href={item.url}>
+                        {item.title==="New Chat" ? <item.icon className="text-[#E27D60]"/> : <item.icon/>}
+                        {item.title==="New Chat" ? <span className="text-[#E27D60]">{item.title}</span> : <span>{item.title}</span>}
+                        
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -103,21 +104,21 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                     <ChatNameSkeleton />
                   </div>
                 ) : isAuthenticated ? (
-                  <div className="group-data-[collapsible=icon]:hidden text-white overflow-y-hidden">
+                  <div className="group-data-[collapsible=icon]:hidden text-[#F4F1ED] overflow-x-hidden overflow-y-hidden">
                     <SidebarGroupLabel className="pb-4 pt-8 text-base text-gray-400">Chats</SidebarGroupLabel>
                     <SidebarGroupContent>
                       <SidebarMenu>
                         {chats.toReversed().map((item) => (
                           <SidebarMenuItem key={item.id} className="group" >
-                            <SidebarMenuButton className={`${item.id===chatid.id ? `bg-[#272727]` : null} flex`} asChild>
+                            <SidebarMenuButton className={`${item.id===chatid.id ? `bg-[#272727]` : null} flex hover:text-[#F4F1ED] hover:bg-[#242424]`} asChild>
                               <a href={item.url}>
                                 <span>{item.title}</span>
                               </a>
                             </SidebarMenuButton>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <SidebarMenuAction className="">
-                                  <MoreHorizontal className='text-white'/>
+                                <SidebarMenuAction className="hover:bg-[#242424]">
+                                  <MoreHorizontal className='text-[#F4F1ED] hover:bg-[#242424]'/>
                                 </SidebarMenuAction>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent className="dark" side="right" align="start">
@@ -141,7 +142,7 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                         Create an account or log in to save your conversations and access them anytime.
                       </p>
                       <Button
-                        className="mt-2 px-6 py-2 text-black sm:text-white rounded-full shadow transition-all duration-200 font-medium text-base "
+                        className="mt-2 px-6 py-2 text-black sm:text-[#F4F1ED] rounded-full shadow transition-all duration-200 font-medium text-base "
                         onClick={() => router.push("/login")}
                         variant='outline'
                       >
@@ -156,7 +157,7 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
 
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="bg-[#191919] w-full text-white">
+        <SidebarFooter className="bg-[#191919] w-full text-[#F4F1ED]">
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
@@ -168,13 +169,13 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   side="top"
-                  className="w-full dark"
+                  className="md:w-[200px] ml-2 dark"
                 >
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     <span>Account</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <span className="text-red-400" onClick={()=> router.push('/')}>Logout</span>
+                  <DropdownMenuItem onClick={()=> router.push('/')} className="cursor-pointer">
+                    <button onClick={() => signOut()} className="text-red-400">Logout</button>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
