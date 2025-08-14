@@ -115,6 +115,7 @@ function Chat({className,query,firstchat}:props) {
   const {data:session,status}=useSession()
 
   const authorized=useMemo(() => status==='authenticated' , [status])
+  console.log(authorized,status)
 
   useEffect(() => {
     
@@ -264,10 +265,10 @@ function Chat({className,query,firstchat}:props) {
         console.error(error);
       }
     };
-    if(authorized){
+    if(status=='authenticated'){
       fetchMessages();
     }
-  }, [])
+  }, [authorized])
 
   useEffect(() => {
     window.scrollTo({left:0, top:document.body.scrollHeight,behavior:'smooth'});
@@ -275,8 +276,10 @@ function Chat({className,query,firstchat}:props) {
 
   useEffect(() => {
     setIsMounted(true);
-    setSignuppopup(true)
-  }, []);
+    if(status=="unauthenticated"){
+      setSignuppopup(true)
+    }
+  }, [status]);
 
   if (isMounted === false) {
     return <ChatSkeleton />
@@ -286,7 +289,7 @@ function Chat({className,query,firstchat}:props) {
     <>
     <div className={`${className} relative`}>
       <div
-        className='md:w-[70%] w-full max-w-182 h-full mx-auto flex flex-col gap-6 items-center pb-24'>
+        className='md:w-[80%] w-full max-w-196 h-full mx-auto flex flex-col gap-6 items-center pb-24'>
             {
               message?.length>0 ?
               message?.map((item, i) => (

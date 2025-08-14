@@ -85,7 +85,7 @@ export default function Home() {
       <AppSidebar chatsession={chatsessionupdate}/>
       <div className="w-full h-screen flex flex-col justify-center items-center">
         <Header/>
-        <div className="flex justify-center items-center text-center pb-[6.5vw] gap-8 flex-col w-full h-full">
+        <div className="flex justify-center items-center text-center pb-[7vw] md:pb-[6.5vw] gap-8 flex-col w-full h-full">
           {/* {isAuthenticated ? <h1 className="md:text-[2.5vw] text-[8.5vw] font-semibold">Hello {session?.user?.name}</h1> : null} */}
           <div className="flex flex-col">
             <h1 className="flex justify-center items-center md:text-[3rem] font-poppins font-semibold text-[2.75rem] text-wrap text-center" >Lamda</h1>

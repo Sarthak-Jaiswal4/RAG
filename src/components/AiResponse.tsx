@@ -1,14 +1,10 @@
 'use client'
-import React from 'react';
+import React, { useContext,createContext } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Button } from './ui/button';
-import { Paperclip } from 'lucide-react';
+import { Copy, Paperclip } from 'lucide-react';
 import LinkDialogue from './LinkDialogue';
-import type { BundledLanguage } from 'shiki'
-import { createHighlighter } from "shiki";
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Sheet,
   SheetClose,
@@ -20,7 +16,12 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import SourcesList from './SourcesList';
-import { nullable } from 'zod';
+import { PrismLight as SyntaxHighlighter} from 'react-syntax-highlighter';
+import {oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+const TableCellContext = createContext(false);
+const useInTableCell = () => useContext(TableCellContext);
+const TableCellProvider = TableCellContext.Provider;
 
 function AiResponse({ content, State,sources }: { content: string | undefined; State: boolean, sources?:Array<string> }) {
   if (!content) return null;
@@ -30,7 +31,7 @@ function AiResponse({ content, State,sources }: { content: string | undefined; S
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          h3: ({ node, ...props }: { node?: any;[key: string]: any }) => <h3 className="text-xl font-semibold" {...props} />,
+          h3: ({ node, ...props }: { node?: any;[key: string]: any }) => <h3 className="text-xl font-semibold pt-2" {...props} />,
           p: ({ node, ...props }: { node?: any;[key: string]: any }) => <p className="mb-3" {...props} />,
           li: ({ node, ...props }: { node?: any;[key: string]: any }) => <li className="list-disc ml-6 mb-[6px]" {...props} />,
           a: ({ node, href, children, ...props }: { node?: any; href?: string; children?: React.ReactNode;[key: string]: any }) => {
@@ -61,36 +62,56 @@ function AiResponse({ content, State,sources }: { content: string | undefined; S
               </a>
             );
           },
-          code: ({ node, className, children, ...props }: { node?: any; className?: string; children?: React.ReactNode;[key: string]: any }) => {
+          table: ({ node, ...props }: any) => (
+            <div className="overflow-auto my-4">
+              <table className="min-w-full border-collapse" {...props} />
+            </div>
+          ),
+          thead: ({ node, ...props }: any) => <thead {...props} />,
+          tbody: ({ node, ...props }: any) => <tbody {...props} />,
+          tr: ({ node, ...props }: any) => <tr className="border-b border-b-gray-600 last:border-0" {...props} />,
+          td: ({ node, ...props }: any) => (
+            <TableCellProvider value={true}>
+              <td className="px-4 py-2 align-top" {...props} />
+            </TableCellProvider>
+          ),
+          th: ({ node, ...props }: any) => (
+            <TableCellProvider value={true}>
+              <th className="px-4 py-2 font-semibold text-left" {...props} />
+            </TableCellProvider>
+          ),
+          code: ({ node,inline, className, children, ...props }: { node?: any; className?: string; inline?: boolean; children?: React.ReactNode;[key: string]: any }) => {
+            const isInTable = useInTableCell();
+            const match = /language-(\w+)/.exec(className || '')
+            if (isInTable) {
+              return (
+                <code
+                  className="font-mono text-sm break-words bg-[#282c34] p-1 rounded-lg"
+                  {...props}
+                >
+                  {children}
+                </code>
+              );
+            }
+            // This is a code block - give it the full treatment
             return (
-              <div className="border rounded-md bg-[#111111] shadow-md p-4 my-4 overflow-x-auto">
-                <pre className="whitespace-pre-wrap break-words font-mono text-sm">
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
-                  {/* <CodeBlock code={String(children)} lang="ts" /> */}
-                </pre>
+              <div className="border border-gray-500 rounded-md flex-col bg-[#282c34] shadow-md flex overflow-x-auto relative my-4">
+                <div className='w-full flex h-8 pt-3 px-2'>
+                  <h1 className='px-2'>{match ? match[1] : "Bash"}</h1>
+                  <Button
+                    className='text-[12px] hover:bg-gray-700/30 hover:text-white absolute right-2 px-1 top-1 py-1'
+                    variant='ghost'
+                    onClick={() => navigator.clipboard.writeText(String(children))}
+                  >
+                    <Copy />
+                  </Button>
+                </div>
+                <SyntaxHighlighter language="javascript" style={oneDark}  {...props}>
+                  {String(children).replace(/\n$/, '')}
+                </SyntaxHighlighter>
               </div>
-            );
+            )
           },
-          table: ({ node, ...props }) => (
-            <table className="min-w-full border my-4 rounded-lg overflow-hidden" {...props} />
-          ),
-          thead: ({ node, ...props }) => (
-            <thead className="" {...props} />
-          ),
-          tbody: ({ node, ...props }) => (
-            <tbody className="" {...props} />
-          ),
-          tr: ({ node, ...props }) => (
-            <tr className="border-b border-b-gray-700 last:border-0" style={{ borderBottomWidth: '0.5px' }} {...props} />
-          ),
-          th: ({ node, ...props }) => (
-            <th className="px-4 py-2 text-left border-b-gray-300 border-b-[1px] font-semibold" {...props} />
-          ),
-          td: ({ node, ...props }) => (
-            <td className="px-4 py-2" {...props} />
-          ),
         }}
       >
         {content}
@@ -99,7 +120,7 @@ function AiResponse({ content, State,sources }: { content: string | undefined; S
       ?
       <Sheet>
         <SheetTrigger asChild>
-          <Button className='dark rounded-2xl cursor-pointer' variant="secondary"><span><Paperclip
+          <Button className='dark rounded-2xl cursor-pointer mt-4' variant="secondary"><span><Paperclip
             className="size-4 inline-block"
           /></span> Sources</Button>
         </SheetTrigger>
@@ -109,29 +130,6 @@ function AiResponse({ content, State,sources }: { content: string | undefined; S
       null
       }
     </>
-  );
-}
-
-interface CodeBlockProps {
-  code: string;
-  lang?: string;
-}
-
- async function CodeBlock({ code, lang = "ts" }: CodeBlockProps) {
-  const highlighter = await createHighlighter({
-    themes: ["github-dark"],
-    langs: ['javascript'],
-  });
-  const codes = highlighter.codeToHtml('const a = 1', {
-    lang: 'javascript',
-    theme: 'nord'
-  })
-
-  return (
-    <div
-      className="shiki"
-      dangerouslySetInnerHTML={{ __html: codes }}
-    />
   );
 }
 

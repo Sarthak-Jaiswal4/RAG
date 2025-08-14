@@ -145,3 +145,10 @@
     --sidebar-ring: oklch(0.439 0 0);
   }
 }
+
+@layer base {
+  td code,
+  th code {
+    @apply bg-transparent px-0 py-0 rounded-none font-normal text-inherit border-none shadow-none;
+  }
+}
