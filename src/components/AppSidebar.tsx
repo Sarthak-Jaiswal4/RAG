@@ -13,6 +13,7 @@ import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
 import ChatNameSkeleton from "./ChatNameSkeleton"
+import HoverLabel from "./HoverLabel"
 
 interface AppSidebarProps {
   chatsession?: chatsessiontype
@@ -113,7 +114,7 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
 
   return (
     <>
-      <Sidebar className={`dark text-[#F4F1ED] border-r-2 bg-[#191919] border-gray-700 overflow-y-auto w-64 transition-all duration-400 ease-in-out`} collapsible="icon">
+      <Sidebar className={`dark text-[#F4F1ED] border-r-2 bg-[#191919] border-gray-700 overflow-y-auto w-[260px] transition-all duration-400 ease-in-out`} collapsible="icon">
         <SidebarContent className="bg-[#191919]">
           <SidebarGroup>
             <SidebarGroupContent className="sticky top-2 left-0 z-10 h-full text-[#F4F1ED] bg-[#191919] w-full py-2 inset-2">
@@ -125,9 +126,8 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                   <SidebarMenuItem className="hover:bg-[#242424] rounded-xl" key={item.title}>
                     <SidebarMenuButton className=" hover:bg-[#242424] hover:text-[#F4F1ED]"  asChild>
                       <a className="hover:bg-[#242424]" href={item.url}>
-                        {item.title==="New Chat" ? <item.icon className="text-[#E27D60]"/> : <item.icon/>}
+                        {item.title==="New Chat" ? <HoverLabel content="New Chat"><item.icon size={22} className="text-[#E27D60]"/></HoverLabel> : <HoverLabel content="Search"><item.icon size={18}/></HoverLabel>}
                         {item.title==="New Chat" ? <span className="text-[#E27D60]">{item.title}</span> : <span>{item.title}</span>}
-                        
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -147,7 +147,7 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                     <SidebarGroupContent>
                       <SidebarMenu>
                         {chats.toReversed().map((item) => (
-                          <SidebarMenuItem key={item.id} className="group" >
+                          <SidebarMenuItem className="group" >
                             <SidebarMenuButton className={`${item.id===chatid.id ? `bg-[#272727]` : null} flex hover:text-[#F4F1ED] hover:bg-[#242424]`} asChild>
                               <a href={item.url}>
                                 <span>{item.title}</span>

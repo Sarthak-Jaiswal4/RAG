@@ -65,7 +65,7 @@ function Header({ className }: props) {
               {
                 isChatPage &&
               <h1
-                className='text-2xl font-normal cursor-pointer'
+                className='text-2xl cursor-pointer bg-[#E27D60] bg-clip-text text-transparent font-semibold'
                 onClick={() => router.push('/')}
               >
                 Lamda

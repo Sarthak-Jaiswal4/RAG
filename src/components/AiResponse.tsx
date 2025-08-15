@@ -106,7 +106,15 @@ function AiResponse({ content, State,sources }: { content: string | undefined; S
                     <Copy />
                   </Button>
                 </div>
-                <SyntaxHighlighter language="javascript" style={oneDark}  {...props}>
+                <SyntaxHighlighter language="javascript" customStyle={{
+                    margin: 0,
+                    padding: "0.75rem 1rem",      // px-4 -> left/right 1rem
+                    background: "transparent"
+                  }} 
+                  codeTagProps={{ style: { padding: 0, margin: 0, fontFamily: "inherit" } }}
+                  style={oneDark}  
+                  {...props}
+                >
                   {String(children).replace(/\n$/, '')}
                 </SyntaxHighlighter>
               </div>

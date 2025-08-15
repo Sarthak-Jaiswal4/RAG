@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Prarambh",
+  title: "Lamda AI",
   description: "Retrieval Augment Generation",
 };
 

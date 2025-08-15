@@ -9,6 +9,8 @@ import {
   SlidersHorizontal,
   MessageCircle,
   Microscope,
+  Cross,
+  X,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -22,6 +24,12 @@ import { Button } from "./ui/button";
 import { useForm } from "react-hook-form";
 import { formvalues } from '@/types/formvalues';
 import { useParams, usePathname, useRouter } from "next/navigation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import HoverLabel from "./HoverLabel";
 
 interface props {
   className?: string;
@@ -43,9 +51,10 @@ function Searchbar({ className,search,dosearch }: props) {
   const searchboxref=useRef<HTMLTextAreaElement | null>(null)
   const [WhichFunction, setWhichFunction] = useState<FunctionType>({ title :'Chat', icon: MessageCircle });
   const [query, setquery] = useState("")
-  const [containerHeight, setContainerHeight] = useState(120)
+  const [containerHeight, setContainerHeight] = useState(115)
   const { register, handleSubmit,reset } = useForm();
-  const forumfocus=useRef<HTMLTextAreaElement>(null)
+  const [file, setfile] = useState<File | undefined>(undefined)
+  const [fileURL, setfileURL] = useState<string | undefined>(undefined)
 
   const handleInput = (e:any) => {
     const textarea = e.target;
@@ -54,7 +63,7 @@ function Searchbar({ className,search,dosearch }: props) {
     textarea.style.height = `${scrollHeight}px`;
     
     // Update container height: base height (120px) + extra height from textarea
-    const baseHeight = 120;
+    const baseHeight = 115;
     const extraHeight = Math.max(0, scrollHeight - 24); // 24px is roughly 1 row
     setContainerHeight(baseHeight + extraHeight);
   };
@@ -84,18 +93,31 @@ function Searchbar({ className,search,dosearch }: props) {
     searchboxref.current?.focus()
   }
 
+  const InputFile=(e:React.ChangeEvent<HTMLInputElement>)=>{
+    const File=e.target?.files?.[0]
+    setfile(File)
+    if(File){
+      const url=URL.createObjectURL(File)
+      console.log(url)
+      setfileURL(url)
+    }else{
+      setfileURL(undefined)
+    }
+  }
+
   return (
-    <div className={` w-full flex justify-center items-center text-[#F4F1ED] mb-6 border-0 `}>
+    <div className={`w-full flex flex-col justify-center items-center text-[#F4F1ED] mb-6 border-0 relative`}>
+      <div className="w-[98%] sm:w-[50vw] md:w-[75vw] lg:w-190 flex justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-full flex justify-center items-center overflow-y-visible"
+          className="w-full flex justify-center items-center overflow-y-visible z-10"
           onClick={formfocus}
         >
           <div
-            className="w-[98%] sm:w-[50vw] md:w-[75vw] lg:w-190 bg-[#303030]/50 backdrop-blur-md border-2 shadow-xl border-gray-500 rounded-3xl p-4 flex flex-col justify-between"
+            className="w-full bg-[#303030]/50 backdrop-blur-md border-2 shadow-xl border-gray-500 rounded-3xl p-4 flex flex-col justify-between"
             style={{ 
               height: `${containerHeight}px`, 
-              minHeight: '120px',
+              // minHeight: '120px',
               maxHeight:'35vh'
             }}
           >
@@ -103,9 +125,10 @@ function Searchbar({ className,search,dosearch }: props) {
               {...register("query", { required: true })}
               onInput={handleInput}
               onFocus={handlefocus}
-              placeholder="Enter your Query"
+              autoFocus={true}
+              placeholder="Enter your Query" 
               className={
-                `w-full box-border resize-none overflow-y-auto rounded outline-none text-base ${className}`
+                `w-full box-border resize-none overflow-y-auto rounded outline-none text-base font-normal ${className}`
               }
               ref={(e)=>{
                 register("query").ref(e);
@@ -132,9 +155,9 @@ function Searchbar({ className,search,dosearch }: props) {
                       <Plus />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-20 dark bg-[#252525] border-0 shadow-2xl/30 rounded-3xl" align="start">
+                  <DropdownMenuContent className="w-auto dark bg-[#252525] border-0 shadow-2xl/30 rounded-3xl" align="start">
                     <DropdownMenuGroup>
-                      <DropdownMenuItem className="hover:bg-[#353535] cursor-pointer">Add files</DropdownMenuItem>
+                      <input type="file" className="hover:bg-[#353535] cursor-pointer rounded-3xl inset-0 p-2" onChange={InputFile} />
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -155,7 +178,7 @@ function Searchbar({ className,search,dosearch }: props) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                    className="w-48 dark p-2 rounded-3xl bg-[#252525] border-0 shadow-2xl/30"
+                    className="w-48 dark p-2 rounded-3xl bg-[#252525] border-0 shadow-2xl/30 cursor-pointer"
                     align="start"
                   >
                     <DropdownMenuGroup>
@@ -165,7 +188,7 @@ function Searchbar({ className,search,dosearch }: props) {
                           onClick={() =>
                             setWhichFunction({ title: item.title, icon: item.icon })
                           }
-                          className="cursor-pointer"
+                          className="hover:bg-[#353535] cursor-pointer rounded-3xl"
                         >
                           <item.icon />
                           <span></span>
@@ -183,6 +206,24 @@ function Searchbar({ className,search,dosearch }: props) {
             </div>
           </div>
         </form>
+      {file && fileURL && (
+        <div className="flex bg-[#303030]/20 border-[1px] border-gray-600 absolute w-[98%] sm:w-[48vw] md:w-[73vw] lg:w-185 px-4 pt-6 rounded-lg items-center top-[80%] h-36 shadow-2xl">
+          <div className="rounded-lg relative flex justify-center">
+            <img
+              className="w-19 h-22 rounded-lg brightness-50"
+              src={fileURL}
+            />
+            <HoverLabel content="Remove">
+              <X className="absolute top-1 right-1 cursor-pointer backdrop-blur-lg rounded-xl hover:bg-gray-800/50 " size={16}
+                onClick={() => {
+                  setfile(undefined)
+                  setfileURL(undefined)
+                }} />
+            </HoverLabel>
+          </div>
+        </div>
+      )}
+      </div>
     </div>
   );
 }

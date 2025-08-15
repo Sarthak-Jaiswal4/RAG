@@ -1,43 +1,17 @@
 import React, { useState, useEffect, Suspense, useMemo } from 'react'
-import { Separator } from './ui/separator'
 import { messagetype } from '@/types/messagetype'
 import { formvalues } from '@/types/formvalues'
 import axios from 'axios'
-import { shoudldosearch } from '@/helper/action'
 import AiResponse from './AiResponse'
-import ErrorDialogue from './ErrorDialogue'
 import ChatSkeleton from './ChatSkeleton'
 import { useSession } from 'next-auth/react'
 import SignUpPopup from './SignUp'
+import { init } from '@/lib/Producer'
 
 interface props {
     className?:string,
     query:formvalues,
     firstchat?:any
-}
-
-const upload = async (role: string, content: string,sessionname:string,sourceList?:string[]): Promise<void>  => {
-  try {
-    console.log("Upload",sourceList)
-    const response = await axios.post('/api/updatemessageandmemory', {
-      role,
-      content,
-      sessionname,
-      sourceList
-    });
-
-    if (response.data.status===404) {
-      console.error(response.data.response)
-      throw new Error('Failed to update message and memory');
-    }
-    if (response.data.status===200) {
-      console.log('message uploaded successfully')
-    }
-    return
-  } catch (error) {
-    console.error('Error uploading message and memory:', error);
-    throw error;
-  }
 }
 
 const handleform = async (payload: any,setIsSearching:React.Dispatch<React.SetStateAction<boolean>>,setMessage:React.Dispatch<React.SetStateAction<messagetype[]>>,setSourcelist:React.Dispatch<React.SetStateAction<Array<string>>>) => {
@@ -115,7 +89,6 @@ function Chat({className,query,firstchat}:props) {
   const {data:session,status}=useSession()
 
   const authorized=useMemo(() => status==='authenticated' , [status])
-  console.log(authorized,status)
 
   useEffect(() => {
     
@@ -136,7 +109,7 @@ function Chat({className,query,firstchat}:props) {
           console.log('Regular query search:', shouldsearch)
           const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
           if(answer.aiResponse){
-            await upload("AI",answer.aiResponse,sessionname,answer.sourceList)
+            await init("AI",answer.aiResponse,sessionname,answer.sourceList)
           }
         }else{
           shouldsearch = await searchOrweb(firstchat, setIsSearching,setState,setisweb)
@@ -144,7 +117,7 @@ function Chat({className,query,firstchat}:props) {
           //search query
           const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
           if(answer.aiResponse){
-            await upload("AI",answer.aiResponse,sessionname,answer.sourceList)
+            await init("AI",answer.aiResponse,sessionname,answer.sourceList)
           }
         }
       } catch (error) {
@@ -191,7 +164,7 @@ function Chat({className,query,firstchat}:props) {
       try {
         setMessage(e => [...e, {role:"human",content:query.query}])
         //should search or think
-        await upload("human",query.query,sessionname)
+        await init("human",query.query,sessionname)
         let shouldsearch
         if(query.type=="Web Search"){
           setisweb(true)
@@ -203,7 +176,7 @@ function Chat({className,query,firstchat}:props) {
           const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
           console.log(answer)
           if(answer.aiResponse){
-            await upload("AI",answer.aiResponse,sessionname,answer.sourceList)
+            await init("AI",answer.aiResponse,sessionname,answer.sourceList)
           }
         }else{
           shouldsearch = await searchOrweb(query, setIsSearching,setState,setisweb)
@@ -212,7 +185,7 @@ function Chat({className,query,firstchat}:props) {
           const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
           console.log(answer)
           if(answer.aiResponse){
-            await upload("AI",answer.aiResponse,sessionname,answer.sourcelist)
+            await init("AI",answer.aiResponse,sessionname,answer.sourcelist)
           }
         }
       } catch (error) {
