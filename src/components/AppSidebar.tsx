@@ -107,25 +107,23 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
     }
   }, [deleteaction])
   
-
-  // Memoize session status to prevent unnecessary re-renders
   const isAuthenticated = useMemo(() => status === "authenticated", [status])
   const isLoading = useMemo(() => status === "loading", [status])
 
   return (
     <>
-      <Sidebar className={`dark text-[#F4F1ED] border-r-2 bg-[#191919] border-gray-700 overflow-y-auto w-[260px] transition-all duration-400 ease-in-out`} collapsible="icon">
-        <SidebarContent className="bg-[#191919]">
+      <Sidebar className={`dark text-[#F4F1ED] border-r-2 bg-[#303030]/50 border-gray-700 overflow-y-auto w-[260px] transition-all duration-400 ease-in-out`} collapsible="icon">
+        <SidebarContent className="bg-[#303030]/50">
           <SidebarGroup>
-            <SidebarGroupContent className="sticky top-2 left-0 z-10 h-full text-[#F4F1ED] bg-[#191919] w-full py-2 inset-2">
-              <SidebarTrigger />
+            <SidebarGroupContent className="sticky top-2 left-0 z-10 h-full text-[#F4F1ED] w-full py-2 inset-2">
+              <SidebarTrigger className="cursor-pointer" />
             </SidebarGroupContent>
             <SidebarGroupContent className="pt-4 text-[#F4F1ED]">
               <SidebarMenu>
                 {items.map((item) => (
-                  <SidebarMenuItem className="hover:bg-[#242424] rounded-xl" key={item.title}>
-                    <SidebarMenuButton className=" hover:bg-[#242424] hover:text-[#F4F1ED]"  asChild>
-                      <a className="hover:bg-[#242424]" href={item.url}>
+                  <SidebarMenuItem className="hover:bg-[#323232] rounded-xl" key={item.title}>
+                    <SidebarMenuButton className=" hover:bg-[#323232] hover:text-[#F4F1ED]"  asChild>
+                      <a className="hover:bg-[#323232]" href={item.url}>
                         {item.title==="New Chat" ? <HoverLabel content="New Chat"><item.icon size={22} className="text-[#E27D60]"/></HoverLabel> : <HoverLabel content="Search"><item.icon size={18}/></HoverLabel>}
                         {item.title==="New Chat" ? <span className="text-[#E27D60]">{item.title}</span> : <span>{item.title}</span>}
                       </a>
@@ -192,22 +190,21 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                 
               </SidebarContent>
             </SidebarGroupContent>
-
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="bg-[#191919] w-full text-[#F4F1ED]">
+        <SidebarFooter className="bg-[#303030]/50 w-full text-[#F4F1ED]">
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton>
+                  <SidebarMenuButton className="hover:bg-[#323232] cursor-pointer">
                     <User2 /> Username
                     <ChevronUp className="ml-auto" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   side="top"
-                  className="md:w-[200px] ml-2 dark"
+                  className="md:w-[240px] w-full ml-2 dark"
                 >
                   <DropdownMenuItem className="cursor-pointer">
                     <span>Account</span>

@@ -100,7 +100,7 @@ function Header({ className }: props) {
                 </div>
               ) : (
                 <div>
-                  <Button onClick={() => router.push('/login')} className='px-3 py-3 rounded-3xl cursor bg-[#303030] border-0' variant='outline'>Sign in</Button>
+                  <Button onClick={() => router.push('/login')} className='px-3 py-3 rounded-3xl cursor bg-[#303030] border-0 cursor-pointer' variant='outline'>Sign in</Button>
                 </div>
               )}
             </div>

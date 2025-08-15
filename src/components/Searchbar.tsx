@@ -115,7 +115,7 @@ function Searchbar({ className,search,dosearch }: props) {
         >
           <div
             className="w-full bg-[#303030]/50 backdrop-blur-md border-2 shadow-xl border-gray-500 rounded-3xl p-4 flex flex-col justify-between"
-            style={{ 
+            style={{  
               height: `${containerHeight}px`, 
               // minHeight: '120px',
               maxHeight:'35vh'
