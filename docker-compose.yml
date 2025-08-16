@@ -31,7 +31,7 @@ services:
     volumes:
       - ./searxng_config:/etc/searxng:rw
     environment:
-      - SEARXNG_BASE_URL=http://192.168.0.188:8181/
+      - SEARXNG_BASE_URL=http://13.233.95.98:8181/
       - UWSGI_WORKERS=4
       - UWSGI_THREADS=4
     cap_drop:

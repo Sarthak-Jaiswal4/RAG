@@ -32,7 +32,7 @@ const worker=new Worker('chatUploadQueue',async(job)=>{
 
 },{
     connection: {
-      host: '13.235.69.247',
+      host: '13.233.95.98',
       port: 6379,
     },
     removeOnComplete: {
