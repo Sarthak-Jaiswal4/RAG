@@ -3,7 +3,7 @@ import Chatsection from '@/components/Chatsection'
 import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
-function page({ params }: { params: Promise<{ id: string }> }) {
+function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   const param = useSearchParams();
   const [InitialPayload, setInitialPayload] = useState<{ message: string; typeofmodel:string; type?: string } | null>(null);
@@ -30,4 +30,4 @@ function page({ params }: { params: Promise<{ id: string }> }) {
   );
 }
 
-export default page
+export default Page

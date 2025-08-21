@@ -11,7 +11,7 @@ interface storage{
     email:string
 }
 
-function page() {
+function Page() {
     const [isloading, setisloading] = useState(false)
     const [code, setcode] = useState("")
     const [Storage, setStorage] = useState<storage>({userId:"",email:''})
@@ -185,4 +185,4 @@ function page() {
       )
 }
 
-export default page
+export default Page

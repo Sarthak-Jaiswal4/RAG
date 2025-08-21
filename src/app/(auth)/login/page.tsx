@@ -4,7 +4,7 @@ import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Sparkles, Brain, RefreshCw }
 import { useRouter } from 'next/navigation';
 import { signIn, SignInResponse } from "next-auth/react"
 
-const page = () => {
+const Page = () => {
   const [issubmitting, setissubmitting] = useState(false)
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -203,4 +203,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
