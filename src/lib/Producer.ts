@@ -2,8 +2,11 @@
 import { auth } from '@/auth'
 import {Queue} from 'bullmq'
 import { cookies } from 'next/headers'
+import { writeFile } from "fs/promises";
+import path from "path";
 
 const ChatUploadQueue= new Queue('chatUploadQueue')
+const FileUploadQueue=new Queue('fileuploadqueue')
 
 export async function init(role: string, content: string,sessionname:string,sourceList?:string[]){
     const token = await cookies()
@@ -21,4 +24,20 @@ export async function init(role: string, content: string,sessionname:string,sour
         authToken: session
     })
     console.log("Job added",res.id)
+}
+
+export async function Upload(File:any){
+
+    const buffer = Buffer.from(await File.arrayBuffer())
+    const filename = File.name.replaceAll(" ", "_")
+    console.log(filename);
+    await writeFile(
+        path.join(process.cwd(), "public/assets/" + filename),
+        buffer
+    );
+
+    const res = await FileUploadQueue.add('Upload file', {
+        filename
+    })
+    console.log("Job added")
 }

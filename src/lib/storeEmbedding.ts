@@ -1,6 +1,6 @@
 import Bottleneck from "bottleneck";
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
-import Helper from '../helper/Helper'
+import {Embedding} from '../helper/Helper'
 import { StoreEmbedding } from "@/Database/queries";
 import { contentSchema } from "@/models/content.model";
 import mongoose from "mongoose";
@@ -20,7 +20,7 @@ async function RecursiveSplitting(context:string,sourceType:string,query?:(strin
       const text = await charsplit.createDocuments([context])
       console.log(text.length)
       // const embedding=await Helper.Embedding(text)
-      const embedding = await limiter.schedule(() => Helper.Embedding(text))
+      const embedding = await limiter.schedule(() => Embedding(text))
       const boundries=await FindSimilarChunk(embedding)
       const docs = merge(embedding, text, boundries,query,sourceType,Link)
       console.log('doc created!')

@@ -8,11 +8,11 @@ interface segment {
 
 export interface contentSchema extends Document {
     sourceType: "static" | "web";
-    chunk_index:  number,
-    title: string;
+    chunk_index?:  number,
+    title?: string;
     text: string;
     embedding: number[]; // Vector embedding for similarity search
-    metadata: {
+    metadata?: {
         static?: {
             fileName?: string;
             pageNumber?: number;
@@ -24,8 +24,8 @@ export interface contentSchema extends Document {
             fetchedAt?: Date;
             segment?: segment;
         };
-    };
-    createdAt?: Date;
+  };
+  createdAt?: Date;
 }
 
 const BaseContentSchema: Schema<contentSchema> = new Schema (
@@ -36,7 +36,7 @@ const BaseContentSchema: Schema<contentSchema> = new Schema (
       required: true,
     },
     chunk_index:{ type:Number },
-    title: { type: String, required: true },
+    title: { type: String, required: false },
     text: { type: String, required: true },
     embedding: {
       type: [Number],
@@ -45,12 +45,12 @@ const BaseContentSchema: Schema<contentSchema> = new Schema (
     },
     metadata: {
       static: {
-        fileName: String,
+        fileName: { type: String, required: true },
         pageNumber: Number,
         segment:{
-          segment_id: Number,
-          segment_start: Number,
-          segment_end: Number,
+          segment_id: { type: Number, required: false },
+          segment_start: { type: Number, required: false },
+          segment_end: { type: Number, required: false },
         }
       },
       web: {

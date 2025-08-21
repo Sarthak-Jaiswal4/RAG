@@ -23,13 +23,11 @@ import {
 import { Button } from "./ui/button";
 import { useForm } from "react-hook-form";
 import { formvalues } from '@/types/formvalues';
-import { useParams, usePathname, useRouter } from "next/navigation";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import HoverLabel from "./HoverLabel";
+import { Upload } from "@/lib/Producer";
+import Toggleswitch from "./ui/Toggleswitch";
+import {useDropzone} from 'react-dropzone';
+import { useModel, useStore } from "@/store/store";
 
 interface props {
   className?: string;
@@ -55,6 +53,22 @@ function Searchbar({ className,search,dosearch }: props) {
   const { register, handleSubmit,reset } = useForm();
   const [file, setfile] = useState<File | undefined>(undefined)
   const [fileURL, setfileURL] = useState<string | undefined>(undefined)
+  const [pdfs, setpdfs] = useState<File[] | undefined>(undefined)
+  const addpdfs= useStore((state)=> state.addPdf)
+  const searchModel=useModel((state) => state.model)
+  const updatesearchModel=useModel((state)=> state.updateModel)
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+    onDrop: (incomingFiles) => {
+      if (incomingFiles.length > 0) {
+        incomingFiles.forEach(async(file) => {
+          setpdfs((prev) => (prev ? [...prev, file] : [file]));
+          await Upload(file)
+          addpdfs(file);
+        });
+      }
+    }
+  });
+  console.log(pdfs)
 
   const handleInput = (e:any) => {
     const textarea = e.target;
@@ -71,7 +85,8 @@ function Searchbar({ className,search,dosearch }: props) {
   const onSubmit = (data:any) => {
     const payload: formvalues = {
       query: data.query ?? "",
-      type: WhichFunction.title
+      type: WhichFunction.title,
+      typeofmodel:searchModel.LM
     };
     console.log(payload);
     setContainerHeight(120);
@@ -93,13 +108,16 @@ function Searchbar({ className,search,dosearch }: props) {
     searchboxref.current?.focus()
   }
 
-  const InputFile=(e:React.ChangeEvent<HTMLInputElement>)=>{
+  const InputFile=async(e:React.ChangeEvent<HTMLInputElement>)=>{
     const File=e.target?.files?.[0]
+    console.log(File)
     setfile(File)
     if(File){
       const url=URL.createObjectURL(File)
       console.log(url)
       setfileURL(url)
+      await Upload(File)
+      console.log('File uploaded successfully')
     }else{
       setfileURL(undefined)
     }
@@ -198,6 +216,7 @@ function Searchbar({ className,search,dosearch }: props) {
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                <Toggleswitch toggle={searchModel.LM} changetoggle={updatesearchModel} />
                 
               </div>
               <Button variant="ghost" type="submit" className="rounded-3xl">
@@ -206,23 +225,32 @@ function Searchbar({ className,search,dosearch }: props) {
             </div>
           </div>
         </form>
-      {file && fileURL && (
-        <div className="flex bg-[#303030]/20 border-[1px] border-gray-600 absolute w-[98%] sm:w-[48vw] md:w-[73vw] lg:w-185 px-4 pt-6 rounded-lg items-center top-[80%] h-36 shadow-2xl">
-          <div className="rounded-lg relative flex justify-center">
-            <img
-              className="w-19 h-22 rounded-lg brightness-50"
-              src={fileURL}
-            />
-            <HoverLabel content="Remove">
-              <X className="absolute top-1 right-1 cursor-pointer backdrop-blur-lg rounded-xl hover:bg-gray-800/50 " size={16}
-                onClick={() => {
-                  setfile(undefined)
-                  setfileURL(undefined)
-                }} />
-            </HoverLabel>
+        {file && fileURL && (
+          <div className="flex bg-[#303030]/20 border-[1px] border-gray-600 absolute w-[98%] sm:w-[48vw] md:w-[73vw] lg:w-185 px-4 pt-6 rounded-lg items-center top-[80%] h-36 shadow-2xl">
+            <div className="rounded-lg relative flex justify-center">
+              <img
+                className="w-19 h-22 rounded-lg brightness-50"
+                src={fileURL}
+              />
+              <HoverLabel content="Remove">
+                <X className="absolute top-1 right-1 cursor-pointer backdrop-blur-lg rounded-xl hover:bg-gray-800/50 " size={16}
+                  onClick={() => {
+                    setfile(undefined)
+                    setfileURL(undefined)
+                  }} />
+              </HoverLabel>
+            </div>
+          </div>
+        )}
+        {searchModel.LM=="RAG" && (
+          <div {...getRootProps({className: 'dropzone'})} className="flex bg-[#303030]/20 border-[1px] border-gray-600 absolute w-[98%] sm:w-[48vw] md:w-[73vw] lg:w-185 px-4 pt-6 rounded-lg items-center top-[80%] h-36 shadow-2xl">
+          <div className="rounded-lg relative flex justify-center w-full">
+            <div  className="w-full h-full flex justify-center items-center text-center">
+              <h1 className="text-gray-400 font-medium border flex justify-center rounded-md items-center border-dashed px-3 py-3 border-gray-500">Drag Your Files Here</h1>
+            </div>
           </div>
         </div>
-      )}
+        )}
       </div>
     </div>
   );

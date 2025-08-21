@@ -7,6 +7,7 @@ import ChatSkeleton from './ChatSkeleton'
 import { useSession } from 'next-auth/react'
 import SignUpPopup from './SignUp'
 import { init } from '@/lib/Producer'
+import { useStore } from '@/store/store'
 
 interface props {
     className?:string,
@@ -75,6 +76,32 @@ const GetMsg=async(sessionname:string)=>{
     throw new Error(error)
   }
 }
+
+const RagSearch=async(query:string,activepdfs:string[],setMessage:React.Dispatch<React.SetStateAction<messagetype[]>>,setSourcelist:React.Dispatch<React.SetStateAction<Array<string>>>,setIsSearching:React.Dispatch<React.SetStateAction<boolean>>)=>{
+  try {
+    const search= await axios.post('/api/ragSearch',{
+      query,PDFs:activepdfs
+    })
+      const aiResponse = search.data.answer;
+      const sourcelist= search.data.SourceList
+      if(aiResponse==undefined || aiResponse==null){
+        setMessage(e => [...e,{role:"AI", content:"Something went wrong!"}]);
+        return aiResponse
+      }
+      if(sourcelist){
+        setSourcelist(sourcelist)
+      }
+      if(search.data.status==200){
+        setMessage(e => [...e,{role:"AI", content:aiResponse, sourceList:sourcelist}]);
+        setIsSearching(false);
+        return { aiResponse,sourcelist}
+      }
+    
+  } catch (error) {
+    console.log("Error in RagSearch function",error)
+    setIsSearching(false);
+  }
+}
  
 function Chat({className,query,firstchat}:props) {
   const [isweb, setisweb] = useState(false)
@@ -87,9 +114,10 @@ function Chat({className,query,firstchat}:props) {
   const sessionname=firstchat.sessionname
   const [Signuppopup, setSignuppopup] = useState(false)
   const {data:session,status}=useSession()
-
+  const pdfs=useStore((state)=> state.pdfs)
+  const activepdfs=pdfs.filter(pdf => pdf.selected==true).map(pdf => pdf.name)
   const authorized=useMemo(() => status==='authenticated' , [status])
-
+  console.log(activepdfs)
   useEffect(() => {
     
     const processFirstChat = async () => {
@@ -98,9 +126,18 @@ function Chat({className,query,firstchat}:props) {
       // Add human message to chat
       try {
         setMessage(e => [...e, {role:"human",content:firstchat.query}])
-        // await upload("human",query.query,sessionname)
+
         let shouldsearch
-        if(firstchat.type=="Web Search"){
+        if(firstchat.typeofmodel=="RAG"){
+          setIsSearching(true)
+          setState("Searching in Documents")
+          setisweb(false)
+          const Ragsearch= await RagSearch(firstchat.query,activepdfs,setMessage,setSourcelist,setIsSearching)
+          if(Ragsearch.aiResponse){
+            await init("AI",Ragsearch.aiResponse,sessionname,Ragsearch.sourceList)
+          }
+        }
+        else if(firstchat.type=="Web Search" && firstchat.typeofmodel=="LLM"){
           setisweb(true)
           setState("Searching web")
           shouldsearch={
@@ -166,7 +203,16 @@ function Chat({className,query,firstchat}:props) {
         //should search or think
         await init("human",query.query,sessionname)
         let shouldsearch
-        if(query.type=="Web Search"){
+        if(query.typeofmodel=="RAG"){
+          setIsSearching(true)
+          setState("Searching in Documents")
+          setisweb(false)
+          const Ragsearch= await RagSearch(query.query,activepdfs,setMessage,setSourcelist,setIsSearching)
+          if(Ragsearch.aiResponse){
+            await init("AI",Ragsearch.aiResponse,sessionname,Ragsearch.sourceList)
+          }
+        }
+        else if(query.type=="Web Search" && query.typeofmodel=="LLM"){
           setisweb(true)
           setState("Searching web")
           shouldsearch={

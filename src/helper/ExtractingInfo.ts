@@ -3,7 +3,6 @@ import TurndownService from 'turndown';
 import {JSDOM} from 'jsdom'
 import { PythonShell } from 'python-shell';
 import RecursiveSplitting from '../lib/storeEmbedding'
-import { chromium } from 'playwright';
 
 const turndownService = new TurndownService({
     headingStyle: 'atx',        // "# H1"

@@ -1,8 +1,8 @@
 import DBconnection from "@/lib/Connection";
 import chatSessionModel, { ChatSession } from "@/models/chat.model"
 import contentModel, { contentSchema } from "@/models/content.model"
-import memoryModel from "@/models/memory.model"
 import userModel from "@/models/user.model";
+import { ContentData } from "@/types/contenttype";
 
 await DBconnection()
 export const StoringChatSession=async(data:any)=>{
@@ -25,7 +25,7 @@ export const StoringChatSession=async(data:any)=>{
     }
 }
 
-export const StoreEmbedding=async(data:contentSchema[])=>{
+export const StoreEmbedding=async(data:contentSchema[] | ContentData[])=>{
     try {
         const response=await contentModel.insertMany(
             data

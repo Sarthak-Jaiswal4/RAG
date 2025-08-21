@@ -11,7 +11,8 @@ interface ChatsectionProps {
 function Chatsection({userquery }: Partial<ChatsectionProps>) {
   const [load, setLoad] = useState<formvalues>({
     query: "", 
-    type: ""
+    type: "",
+    typeofmodel:''
   });
 
   return (

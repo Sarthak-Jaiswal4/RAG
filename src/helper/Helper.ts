@@ -10,7 +10,7 @@ function QueryCreator(query:string){
     return String(query).replace(/ /g, "+")
 }
 
-async function Embedding(context: any[]):Promise<number[][]>{
+export async function Embedding(context: any[]):Promise<number[][]>{
     console.log("Embedding starts.....")
     const texts = context.map((doc: any) => doc.pageContent);
     const documentRes = await embeddings.embedDocuments(texts);
@@ -51,5 +51,15 @@ async function TitleExtractor(query: string) {
     return title;
 }
 
+export async function getName(pdfs:string[]){
+    const newarray=pdfs.map(pdf => {
+        const filename = pdf.replaceAll(" ", "_")
+        const fullpath=`public/assets/${filename}`
+        console.log(filename,fullpath)
+        return fullpath
+    });
+    return newarray
+}
 
-export default {QueryCreator,Embedding,TitleExtractor}
+
+export default {QueryCreator,TitleExtractor}
