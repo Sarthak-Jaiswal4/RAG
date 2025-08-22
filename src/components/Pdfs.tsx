@@ -14,7 +14,7 @@ export function Pdfs({className}:{className:any}) {
   const allpdf = useStore((state) => state.pdfs)
   const togglepdf = useStore((state) => state.toggleStatus)
   const updatepdf=useStore((state)=> state.addPdf)
-  const inputref = useRef(null)
+  const inputref = useRef<HTMLInputElement>(null)
 
   console.log(allpdf)
 

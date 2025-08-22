@@ -17,7 +17,7 @@ const embeddings = new CohereEmbeddings({
 const chatworker=new Worker('chatUploadQueue',async(job)=>{
     console.log("Worker recieves",job.id)
     try {
-        const response = await axios.post(`http://localhost:3000/api/updatemessageandmemory`, {
+        const response = await axios.post(`https://rag-xi-peach.vercel.app/api/updatemessageandmemory`, {
           role:job.data.role,
           content:job.data.content,
           sessionname:job.data.sessionname,
