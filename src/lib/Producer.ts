@@ -20,7 +20,7 @@ const FileUploadQueue=new Queue('fileuploadqueue',{
 export async function init(role: string, content: string,sessionname:string,sourceList?:string[]){
     const token = await cookies()
     const session=token.get('authjs.session-token')
-
+    console.log(token,session)
     if (!token) {
         console.log('No JWT token found')
         return
