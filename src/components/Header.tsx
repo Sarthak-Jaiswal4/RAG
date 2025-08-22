@@ -55,7 +55,7 @@ function Header({ className }: props) {
 
   return (
     <>
-      <div className={`w-full h-[60px] md:h-[60px] px-4 flex flex-row items-center py-4 md:backdrop-blur-none backdrop-blur-sm ${className}`}>
+      <div className={`w-full h-[55px] md:h-[55px] px-1 md:px-4 flex flex-row items-center py-4 md:backdrop-blur-none backdrop-blur-sm ${className}`}>
         
           <div className='flex justify-between items-center w-full h-full'>
             <div className='flex items-center rounded-xl px-2 py-1'>
@@ -65,7 +65,7 @@ function Header({ className }: props) {
               {
                 isChatPage &&
               <h1
-                className='text-2xl cursor-pointer bg-[#E27D60] bg-clip-text text-transparent font-semibold'
+                className='text-xl md:text-2xl cursor-pointer bg-[#E27D60] bg-clip-text text-transparent font-bold md:font-semibold'
                 onClick={() => router.push('/')}
               >
                 Lamda

@@ -117,7 +117,7 @@ function AiResponse({ content, State,sources }: { content: string | undefined; S
                 >
                   {String(children).replace(/\n$/, '')}
                 </SyntaxHighlighter>
-              </div>
+            </div>
             )
           },
         }}

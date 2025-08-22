@@ -112,10 +112,10 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
 
   return (
     <>
-      <Sidebar className={`dark text-[#F4F1ED] border-r-2 bg-[#303030]/50 border-gray-700 overflow-y-auto w-[260px] transition-all duration-400 ease-in-out`} collapsible="icon">
-        <SidebarContent className="bg-[#303030]/50">
+      <Sidebar className={`text-[#F4F1ED] border-r-2 bg-[#171717] border-gray-700 overflow-y-auto w-[260px] transition-all duration-400 ease-in-out`} collapsible="icon">
+        <SidebarContent className="bg-[#171717]">
           <SidebarGroup>
-            <SidebarGroupContent className="sticky top-2 left-0 z-10 h-full text-[#F4F1ED] w-full py-2 inset-2">
+            <SidebarGroupContent className="sticky top-0 left-0 z-10 h-full bg-[#171717] text-[#F4F1ED] w-full py-2 inset-2">
               <SidebarTrigger className="cursor-pointer" />
             </SidebarGroupContent>
             <SidebarGroupContent className="pt-4 text-[#F4F1ED]">
@@ -192,12 +192,12 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="bg-[#303030]/50 w-full text-[#F4F1ED]">
+        <SidebarFooter className="bg-[#171717] w-full text-[#F4F1ED]">
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton className="hover:bg-[#323232] cursor-pointer">
+                  <SidebarMenuButton className="hover:bg-[#323232] hover:text-[#F4F1ED] cursor-pointer">
                     <User2 /> Username
                     <ChevronUp className="ml-auto" />
                   </SidebarMenuButton>

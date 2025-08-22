@@ -259,6 +259,7 @@ async function answerwithollama(userquery: string,result: any[],type?:string): P
 
 4. **Formatting extras:**  
    - You may include a brief bullet list or a small table to clarify key points, but keep it very concise.
+   - At the end of your answer, always include a **TL;DR** section: a short summary in bullet points or a compact table.
 
 ---
 
@@ -467,7 +468,7 @@ async function PDFanswerwithollama(userquery: string,result: any[],type?:string)
   console.log(sourceList)
 
   const chatprompt = `
-  You are a friendly, knowledgeable AI assistant.  Answer the user’s question in a conversational style, using the retrieved context below as your primary source.  Follow these rules:
+You are a friendly, knowledgeable AI assistant.  Answer the user’s question in a conversational style, using the retrieved context below as your primary source.  Follow these rules:
 
 1. **Base every factual claim on the retrieved context.**  
    - Cite each reference as “(Doc 1)”, “(Doc 2)”, etc., and replace those tags with the corresponding file name from the SOURCES list.
@@ -482,6 +483,7 @@ async function PDFanswerwithollama(userquery: string,result: any[],type?:string)
 
 4. **Formatting extras:**  
    - You may include a brief bullet list or a small table to clarify key points, but keep it very concise.
+   - At the end of your answer, always include a **TL;DR** section: a short summary in bullet points or a compact table.
 
 ---
 

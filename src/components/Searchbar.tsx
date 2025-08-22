@@ -66,7 +66,7 @@ function Searchbar({ className,search,dosearch }: props) {
           addpdfs(file);
         });
       }
-    }
+    },
   });
   console.log(pdfs)
 
@@ -244,9 +244,10 @@ function Searchbar({ className,search,dosearch }: props) {
         )}
         {searchModel.LM=="RAG" && (
           <div {...getRootProps({className: 'dropzone'})} className="flex bg-[#303030]/20 border-[1px] border-gray-600 absolute w-[98%] sm:w-[48vw] md:w-[73vw] lg:w-185 px-4 pt-6 rounded-lg items-center top-[80%] h-36 shadow-2xl">
-          <div className="rounded-lg relative flex justify-center w-full">
+           <input {...getInputProps()} multiple/>
+          <div className="rounded-lg relative flex justify-center w-full cursor-pointer">
             <div  className="w-full h-full flex justify-center items-center text-center">
-              <h1 className="text-gray-400 font-medium border flex justify-center rounded-md items-center border-dashed px-3 py-3 border-gray-500">Drag Your Files Here</h1>
+              <h1 className="text-gray-400 font-medium border flex justify-center rounded-md items-center border-dashed px-3 py-3 border-gray-500">Click or Drag Your Files Here</h1>
             </div>
           </div>
         </div>

@@ -7,6 +7,7 @@ import '../globals.css'
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from 'next-auth/react';
 import { Pdfs } from '@/components/Pdfs';
+import { useModel } from '@/store/store';
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -23,6 +24,7 @@ export default function RootLayout({
   }: Readonly<{
     children: React.ReactNode;
   }>) {
+    const model=useModel((state)=> state.model)
     return (
         <html lang="en"> 
           <body
@@ -33,7 +35,8 @@ export default function RootLayout({
                 <AppSidebar/>
                 <div className="w-full min-h-screen flex flex-col bg-[#1A1A1A] text-[#F4F1ED] relative">
                   <Header className='sticky top-0 z-10' />
-                  <Pdfs className={'sticky top-[65px] ml-4 z-10 cursor-pointer'} />
+                  {model.LM=="RAG" && 
+                  <Pdfs className={'sticky top-[65px] ml-4 z-10 cursor-pointer'} />}
                   {children}
                 </div>
                 </SidebarProvider>

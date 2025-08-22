@@ -117,7 +117,7 @@ function Chat({className,query,firstchat}:props) {
   const pdfs=useStore((state)=> state.pdfs)
   const activepdfs=pdfs.filter(pdf => pdf.selected==true).map(pdf => pdf.name)
   const authorized=useMemo(() => status==='authenticated' , [status])
-  console.log(activepdfs)
+
   useEffect(() => {
     
     const processFirstChat = async () => {
@@ -312,8 +312,8 @@ function Chat({className,query,firstchat}:props) {
             {
               message?.length>0 ?
               message?.map((item, i) => (
-                <div key={i} className={`w-[95%] flex rounded-3xl ${item.role == "AI" ? 'justify-start' : 'justify-end'}`}>
-                  <h1 className={` ${item.role == "AI" ? 'justify-start w-[97%]' : 'bg-[#292929] max-w-[80%]'} py-3 px-4 rounded-3xl `}>{item.role=='AI' ?  <AiResponse State={isweb} sources={item.sourceList}  content={item.content}/> :item.content}</h1>
+                <div key={i} className={`w-[98%] flex rounded-3xl ${item.role == "AI" ? 'justify-start' : 'justify-end'}`}>
+                  <h1 className={` ${item.role == "AI" ? 'justify-start w-[97%]' : 'bg-[#292929] max-w-[80%]'} py-3 px-3 rounded-3xl relative`}>{item.role=='AI' ?  <AiResponse State={isweb} sources={item.sourceList}  content={item.content}/> :item.content}</h1>
                 </div>
               ))
               :

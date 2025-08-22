@@ -6,26 +6,43 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Checkbox } from "./ui/checkbox"
-import { FileText, Plus } from "lucide-react"
+import { Files, FileText, Plus } from "lucide-react"
 import { useModel, useStore } from "@/store/store"
+import { useRef } from "react"
 
 export function Pdfs({className}:{className:any}) {
   const allpdf = useStore((state) => state.pdfs)
   const togglepdf = useStore((state) => state.toggleStatus)
+  const updatepdf=useStore((state)=> state.addPdf)
+  const inputref = useRef(null)
 
   console.log(allpdf)
+
+  const inputclick=()=>{
+    inputref.current?.click()
+  }
+
+  const fileselector=(e:any)=>{
+    const file=e.target?.files[0]
+    console.log(file)
+    updatepdf(file)
+  }
   return (
     <div className={`${className}`}>
       <Popover >
         <PopoverTrigger asChild>
-          <Button className="bg-[#292929] hover:bg-[#313131] rounded-2xl cursor-pointer" variant="default">Sources</Button>
+          {/* <Button className="bg-[#292929] hover:bg-[#313131] rounded-2xl cursor-pointer" variant="default">Sources</Button> */}
+          <Files className="bg-[#292929] hover:bg-[#313131] rounded-md cursor-pointer p-2 " size={36} />
         </PopoverTrigger>
         <PopoverContent align="start" className="w-72 dark rounded-2xl">
           <div className="grid gap-3 pt-2">
             <div className="space-y-2 flex justify-between items-center">
               <h4 className="leading-none font-medium">All PDFs</h4>
-              <p className="text-muted-foreground text-sm">
-                <Plus className="hover:bg-[#313131] rounded-full p-1" size={30} />
+              <p className="text-muted-foreground text-sm relative">
+                <button onClick={inputclick} className="hover:bg-[#313131] p-1 border-0 cursor-pointer rounded-full">
+                  <Plus  size={25} />
+                </button>
+                <input type="file" onChange={fileselector} ref={inputref} multiple className="absolute w-0 h-0 pointer-events-none"/>
               </p>
             </div>
              { allpdf.length==0 &&

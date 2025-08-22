@@ -65,7 +65,7 @@ export const useModel=create<StoreModel>()(
                     })),
                 openSection:(what)=>
                     set((state)=>({
-                        model:{...state.model,open:true}
+                        model:{...state.model,open:!open}
                     }))
             }),
             {name:'model'}

@@ -90,7 +90,7 @@ export default function Home() {
       <div className="w-full h-screen flex flex-col justify-center items-center relative">
         <Header/>
         {model.LM=="RAG" && 
-        <Pdfs className={'absolute top-[20px] left-4'} />
+        <Pdfs className={'absolute top-[55px] left-6 md:top-[20px] md:left-4'} />
         }
         <div className="flex justify-center items-center text-center pb-[7vw] md:pb-[52px] gap-[40px] flex-col w-full h-full">
           {/* {isAuthenticated ? <h1 className="md:text-[2.5vw] text-[8.5vw] font-semibold">Hello {session?.user?.name}</h1> : null} */}
