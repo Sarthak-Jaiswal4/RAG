@@ -1,12 +1,21 @@
 'use server'
-import { auth } from '@/auth'
 import {Queue} from 'bullmq'
 import { cookies } from 'next/headers'
 import { writeFile } from "fs/promises";
 import path from "path";
 
-const ChatUploadQueue= new Queue('chatUploadQueue')
-const FileUploadQueue=new Queue('fileuploadqueue')
+const ChatUploadQueue= new Queue('chatUploadQueue',{
+    connection: {
+      host: "65.0.30.180",
+      port: 6379,           
+    },
+  });
+const FileUploadQueue=new Queue('fileuploadqueue',{
+    connection: {
+      host: "65.0.30.180",
+      port: 6379,           
+    },
+  })
 
 export async function init(role: string, content: string,sessionname:string,sourceList?:string[]){
     const token = await cookies()
