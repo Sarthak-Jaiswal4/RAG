@@ -89,3 +89,21 @@ const fileworker=new Worker('fileuploadqueue',async(job)=>{
       count: 50, // keep up to 1000 jobs
   },
 })
+
+chatworker.on("failed", (job, err) => {
+  console.error(`❌ Job ${job?.id} failed with data:`, job?.data);
+  console.error("Error:", err);
+});
+
+chatworker.on("completed", (job) => {
+  console.log(`✅ Job ${job.id} completed with result:`, job.returnvalue);
+});
+
+fileworker.on("failed", (job, err) => {
+  console.error(`❌ Job ${job?.id} failed with data:`, job?.data);
+  console.error("Error:", err);
+});
+
+fileworker.on("completed", (job) => {
+  console.log(`✅ Job ${job.id} completed with result:`, job.returnvalue);
+});
