@@ -24,7 +24,7 @@ const chatworker=new Worker('chatUploadQueue',async(job)=>{
           sourceList:job.data.sourceList
         },{
             headers: {
-              Cookie: `authjs.session-token=${job.data.authToken.value}`
+              Cookie: `__Secure-authjs.session-token=${job.data.authToken.value}`
             }
         });
 
