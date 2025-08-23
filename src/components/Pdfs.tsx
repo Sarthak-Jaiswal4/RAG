@@ -9,6 +9,7 @@ import { Checkbox } from "./ui/checkbox"
 import { Files, FileText, Plus } from "lucide-react"
 import { useModel, useStore } from "@/store/store"
 import { useRef } from "react"
+import { Upload } from "@/lib/Producer"
 
 export function Pdfs({className}:{className:any}) {
   const allpdf = useStore((state) => state.pdfs)
@@ -23,9 +24,13 @@ export function Pdfs({className}:{className:any}) {
   }
 
   const fileselector=(e:any)=>{
-    const file=e.target?.files[0]
-    console.log(file)
-    updatepdf(file)
+    const file=e.target?.files
+    e.target.files.forEach(async(file:any) => {
+      console.log(file)
+      // setpdfs((prev) => (prev ? [...prev, file] : [file]));
+      await Upload(file)
+      updatepdf(file);
+    });
   }
   return (
     <div className={`${className}`}>
