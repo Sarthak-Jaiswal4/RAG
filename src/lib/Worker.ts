@@ -7,6 +7,17 @@ import {Embedding} from '../helper/Helper'
 import { CohereEmbeddings } from '@langchain/cohere';
 import { StoreEmbedding } from "@/Database/queries";
 import { ContentData } from "@/types/contenttype";
+import path from "path";
+import { writeFile } from "fs/promises";
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+
+const s3 = new S3Client({
+  region: process.env.AWS_REGION!,
+  credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
+  }
+});
 
 const embeddings = new CohereEmbeddings({
   apiKey: process.env.COHERE_API_KEY,
@@ -56,13 +67,36 @@ const chatworker=new Worker('chatUploadQueue',async(job)=>{
 
 const fileworker=new Worker('fileuploadqueue',async(job)=>{
   console.log('Worker',job.data)
+  const filename=job.data.filename
+
+  const getfilefroms3=new GetObjectCommand({
+    Bucket:process.env.AWS_BUCKET,
+    Key:filename
+  })
+
+  const response:any = await s3.send(getfilefroms3);
+  console.log(response.$metadata.httpStatusCode)
+  const chunks = [];
+  for await (const chunk of response.Body) {
+    chunks.push(chunk);
+  }
+  const buffer = Buffer.concat(chunks);
+
+  await writeFile(
+      path.join(process.cwd(), "public/assets/" + filename),
+      buffer
+  );
+
   const loader = new PDFLoader(`public/assets/${job.data.filename}`);
   const docs = await loader.load();
   console.log(docs.length)
+
   const embedding=await Embedding(docs)
+
   const document: ContentData[]=[]
+  console.log(docs[2].metadata)
+  
   for(let i =0;i<docs.length;i++){
-    console.log(docs[2].metadata)
     let result: ContentData={
       sourceType:'static',
       text:docs[i].pageContent,
@@ -96,7 +130,7 @@ chatworker.on("failed", (job, err) => {
 });
 
 chatworker.on("completed", (job) => {
-  console.log(`✅ Job ${job.id} completed with result:`, job.returnvalue);
+  console.log(`✅ Job ${job.id} completed with result`);
 });
 
 fileworker.on("failed", (job, err) => {
@@ -105,5 +139,5 @@ fileworker.on("failed", (job, err) => {
 });
 
 fileworker.on("completed", (job) => {
-  console.log(`✅ Job ${job.id} completed with result:`, job.returnvalue);
+  console.log(`✅ Job ${job.id} completed with result`);
 });

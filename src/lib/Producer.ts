@@ -3,6 +3,7 @@ import {Queue} from 'bullmq'
 import { cookies } from 'next/headers'
 import { writeFile } from "fs/promises";
 import path from "path";
+import { UploadS3 } from './S3bucket';
 
 const ChatUploadQueue= new Queue('chatUploadQueue',{
     connection: {
@@ -23,7 +24,7 @@ export async function init(role: string, content: string,sessionname:string,sour
     const authjs_csrf_token=token.get('__Host-authjs.csrf-token')
     const authjs_callback_url=token.get('__Secure-authjs.callback-url')
 
-    console.log(token,authjs_session_token,authjs_csrf_token,authjs_callback_url)
+    console.log(authjs_session_token,authjs_csrf_token,authjs_callback_url)
     if (!token) {
         console.log('No JWT token found')
         return
@@ -40,18 +41,19 @@ export async function init(role: string, content: string,sessionname:string,sour
     console.log("Job added",res.id)
 }
 
-export async function Upload(File:any){
+export async function Upload(File:File){
 
-    const buffer = Buffer.from(await File.arrayBuffer())
     const filename = File.name.replaceAll(" ", "_")
-    console.log(filename);
-    await writeFile(
-        path.join(process.cwd(), "public/assets/" + filename),
-        buffer
-    );
-
-    const res = await FileUploadQueue.add('Upload file', {
-        filename
-    })
+    console.log("fileName",filename);
+    const uploaded:any = await UploadS3(File,filename)
+    if(uploaded.$metadata.httpStatusCode==200){
+        const res = await FileUploadQueue.add('Upload file', {
+            filename
+        })
+    }
+    else{
+        console.error("something when wrong cannot uplaod to the queue")
+        throw new Error("Error in uploading file to queue")
+    }
     console.log("Job added")
 }

@@ -23,15 +23,12 @@ export function Pdfs({className}:{className:any}) {
     inputref.current?.click()
   }
 
-  const fileselector=(e:any)=>{
-    const file=e.target?.files
-    file.forEach(async(file:any) => {
-      console.log(file)
-      // setpdfs((prev) => (prev ? [...prev, file] : [file]));
-      await Upload(file)
-      updatepdf(file);
-    });
-  }
+  const fileselector=async(e:any)=>{
+    const file=e.target?.files[0]
+    console.log(file)
+    await Upload(file)
+    updatepdf(file);
+  };
   return (
     <div className={`${className}`}>
       <Popover >
