@@ -62,7 +62,7 @@ const fileworker=new Worker('fileuploadqueue',async(job)=>{
   const embedding=await Embedding(docs)
   const document: ContentData[]=[]
   for(let i =0;i<docs.length;i++){
-    console.log(docs[i].metadata)
+    console.log(docs[2].metadata)
     let result: ContentData={
       sourceType:'static',
       text:docs[i].pageContent,

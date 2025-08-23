@@ -45,7 +45,7 @@ const BaseContentSchema: Schema<contentSchema> = new Schema (
     },
     metadata: {
       static: {
-        fileName: { type: String, required: true },
+        fileName: { type: String },
         pageNumber: Number,
         segment:{
           segment_id: { type: Number, required: false },

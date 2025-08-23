@@ -25,7 +25,7 @@ export function Pdfs({className}:{className:any}) {
 
   const fileselector=(e:any)=>{
     const file=e.target?.files
-    e.target.files.forEach(async(file:any) => {
+    file.forEach(async(file:any) => {
       console.log(file)
       // setpdfs((prev) => (prev ? [...prev, file] : [file]));
       await Upload(file)
