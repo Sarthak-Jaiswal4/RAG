@@ -2,8 +2,6 @@ import axios from "axios"
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
-import userModel, { User } from "./models/user.model"
-import bcrypt from 'bcrypt'
 
 // Check for required environment variables
 const requiredEnvVars = {

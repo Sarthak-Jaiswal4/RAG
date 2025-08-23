@@ -19,8 +19,11 @@ const FileUploadQueue=new Queue('fileuploadqueue',{
 
 export async function init(role: string, content: string,sessionname:string,sourceList?:string[]){
     const token = await cookies()
-    const session=token.get('__Secure-authjs.session-token')
-    console.log(token,session)
+    const authjs_session_token=token.get('__Secure-authjs.session-token')
+    const authjs_csrf_token=token.get('__Host-authjs.csrf-token')
+    const authjs_callback_url=token.get('__Secure-authjs.callback-url')
+
+    console.log(token,authjs_session_token,authjs_csrf_token,authjs_callback_url)
     if (!token) {
         console.log('No JWT token found')
         return
@@ -30,7 +33,9 @@ export async function init(role: string, content: string,sessionname:string,sour
         content,
         sessionname,
         sourceList,
-        authToken: session
+        authjs_session_token: authjs_session_token,
+        authjs_csrf_token:authjs_csrf_token,
+        authjs_callback_url:authjs_callback_url
     })
     console.log("Job added",res.id)
 }
