@@ -28,14 +28,14 @@ const embeddings = new CohereEmbeddings({
 const chatworker=new Worker('chatUploadQueue',async(job)=>{
     console.log("Worker recieves",job.id,job.data)
     try {
-        const response = await axios.post(`https://rag-xi-peach.vercel.app/api/updatemessageandmemory`, {
+        const response = await axios.post(`http://localhost:3000/api/updatemessageandmemory`, {
           role:job.data.role,
           content:job.data.content,
           sessionname:job.data.sessionname,
           sourceList:job.data.sourceList
         },{
             headers: {
-              Cookie:`__Secure-authjs.session-token=${job.data.authjs_session_token.value}; __Host-authjs.csrf-token=${job.data.authjs_csrf_token.value}; __Secure-authjs.callback-url=${job.data.authjs_callback_url.value}`
+              Cookie:`authjs.session-token=${job.data.authjs_session_token.value}; authjs.csrf-token=${job.data.authjs_csrf_token.value}; authjs.callback-url=${job.data.authjs_callback_url.value}`
             }
         });
 
@@ -56,7 +56,7 @@ const chatworker=new Worker('chatUploadQueue',async(job)=>{
 },{
     concurrency: 50,
     connection: {
-      host: '65.0.30.180',
+      host: 'localhost',
       port: 6379,
     },
     removeOnComplete: {
@@ -115,7 +115,7 @@ const fileworker=new Worker('fileuploadqueue',async(job)=>{
   console.log("saved successfully")
 },{
   connection: {
-    host: '65.0.30.180',
+    host: 'localhost',
     port: 6379,
   },
   removeOnComplete: {

@@ -7,24 +7,24 @@ import { UploadS3 } from './S3bucket';
 
 const ChatUploadQueue= new Queue('chatUploadQueue',{
     connection: {
-      host: "65.0.30.180",
+      host: "localhost",
       port: 6379,           
     },
   });
 const FileUploadQueue=new Queue('fileuploadqueue',{
     connection: {
-      host: "65.0.30.180",
+      host: "localhost",
       port: 6379,           
     },
   })
 
 export async function init(role: string, content: string,sessionname:string,sourceList?:string[]){
     const token = await cookies()
-    const authjs_session_token=token.get('__Secure-authjs.session-token')
-    const authjs_csrf_token=token.get('__Host-authjs.csrf-token')
-    const authjs_callback_url=token.get('__Secure-authjs.callback-url')
+    const authjs_session_token=token.get('authjs.session-token')
+    const authjs_csrf_token=token.get('authjs.csrf-token')
+    const authjs_callback_url=token.get('authjs.callback-url')
 
-    console.log(authjs_session_token,authjs_csrf_token,authjs_callback_url)
+    // console.log(authjs_session_token,authjs_csrf_token,authjs_callback_url)
     if (!token) {
         console.log('No JWT token found')
         return

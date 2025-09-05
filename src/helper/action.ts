@@ -58,11 +58,12 @@ export const DoWebSearch=async(decision:string,confidence:number,query:string,ty
 export const RetriveFromDb=async(query:string,type?:string)=>{
     try {
         const response:any=await querySearching.QueryEmbedding(query,type)
-        if(response){
-            const answer=response?.response?.content
-            const sourceList=response.uniqueUrls
-            return {answer,sourceList}
-        }
+        // if(response){
+        //     const answer=response?.response?.content
+        //     const sourceList=response.uniqueUrls
+        //     return {answer,sourceList}
+        // }
+        return response
     } catch (error:any) {
     throw new Error('Error in Retrieval from DB', error)
     }

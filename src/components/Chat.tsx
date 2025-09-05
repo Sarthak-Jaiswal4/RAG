@@ -15,24 +15,94 @@ interface props {
     firstchat?:any
 }
 
+const upload = async (role: string, content: string,sessionname:string): Promise<void>  => {
+  try {
+    const response = await axios.post('/api/updatemessageandmemory', {
+      role,
+      content,
+      sessionname,
+    });
+
+    if (response.data.status===404) {
+      console.error(response.data.response)
+      throw new Error('Failed to update message and memory');
+    }
+    if (response.data.status===200) {
+      console.log('message uploaded successfully')
+    }
+    return
+  } catch (error) {
+    console.error('Error uploading message and memory:', error);
+    throw error;
+  }
+}
+
 const handleform = async (payload: any,setIsSearching:React.Dispatch<React.SetStateAction<boolean>>,setMessage:React.Dispatch<React.SetStateAction<messagetype[]>>,setSourcelist:React.Dispatch<React.SetStateAction<Array<string>>>) => {
   console.log('form submitted',payload);
   try {
-    const response = await axios.post(`/api/search`,payload);
-    const aiResponse = response.data.response;
-    const sourcelist= response.data.SourceList
-    console.log(response.data)
-    if(sourcelist){
-      setSourcelist(sourcelist)
-    }
-    if(aiResponse==undefined || aiResponse==null){
-      setMessage(e => [...e,{role:"AI", content:"Something went wrong!"}]);
+    const res = await fetch(`/api/search`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+
+    const reader = res.body?.getReader()
+    if (!reader) {
+      const data = await res.json()
+      const aiResponse = data.response
+      const sourcelist = data.SourceList
+      if(sourcelist){
+        setSourcelist(sourcelist)
+      }
+      if(aiResponse==undefined || aiResponse==null){
+        setMessage(e => [...e,{role:"AI", content:"Something went wrong!"}]);
+        setIsSearching(false);
+        return aiResponse
+      }
+      setMessage(e => [...e,{role:"AI", content:aiResponse, sourceList:sourcelist}]);
       setIsSearching(false);
-      return aiResponse
+      return {aiResponse,sourcelist};
     }
-    setMessage(e => [...e,{role:"AI", content:aiResponse, sourceList:sourcelist}]);
-    setIsSearching(false);
-    return {aiResponse,sourcelist};
+
+    const decoder=new TextDecoder()
+    let content = ""
+    let aiMessageInitialized = false
+    setIsSearching(false)
+    while(true){
+      const {done, value} = await reader.read()
+      if(done) break
+
+      const chunk = decoder.decode(value, { stream: true })
+      const lines = chunk.split("\n")
+
+      for (const line of lines){
+        if(line.startsWith("data: ")){
+          try {
+            const data = JSON.parse(line.slice(6))
+            content += typeof data === 'string' ? data : (data?.text ?? '')
+          } catch {
+            continue
+          }
+
+          if (!aiMessageInitialized) {
+            setMessage(e => [...e, { role: "AI", content }])
+            aiMessageInitialized = true
+          } else {
+            setMessage(prev => {
+              const arr = [...prev]
+              const last = arr.length - 1
+              if (last >= 0 && arr[last].role === 'AI') {
+                arr[last] = { ...arr[last], content }
+              } else {
+                arr.push({ role: 'AI', content })
+              }
+              return arr
+            })
+          }
+        }
+      }
+    }
+    return content
   } catch (err) {
     console.log("error in searching query API call",err);
     setIsSearching(false);
@@ -134,7 +204,7 @@ function Chat({className,query,firstchat}:props) {
           setisweb(false)
           const Ragsearch= await RagSearch(firstchat.query,activepdfs,setMessage,setSourcelist,setIsSearching)
           if(Ragsearch.aiResponse){
-            await init("AI",Ragsearch.aiResponse,sessionname,Ragsearch.sourceList)
+            await upload("AI",Ragsearch.aiResponse,sessionname)
           }
         }
         else if(firstchat.type=="Web Search" && firstchat.typeofmodel=="LLM"){
@@ -145,16 +215,16 @@ function Chat({className,query,firstchat}:props) {
           }
           console.log('Regular query search:', shouldsearch)
           const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
-          if(answer.aiResponse){
-            await init("AI",answer.aiResponse,sessionname,answer.sourceList)
+          if(answer){
+            await upload("AI",answer,sessionname)
           }
         }else{
           shouldsearch = await searchOrweb(firstchat, setIsSearching,setState,setisweb)
           console.log('Regular query LLM:', shouldsearch)
           //search query
           const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
-          if(answer.aiResponse){
-            await init("AI",answer.aiResponse,sessionname,answer.sourceList)
+          if(answer){
+            await upload("AI",answer,sessionname)
           }
         }
       } catch (error) {
@@ -201,7 +271,7 @@ function Chat({className,query,firstchat}:props) {
       try {
         setMessage(e => [...e, {role:"human",content:query.query}])
         //should search or think
-        await init("human",query.query,sessionname)
+        await upload("human",query.query,sessionname)
         let shouldsearch
         if(query.typeofmodel=="RAG"){
           setIsSearching(true)
@@ -209,7 +279,7 @@ function Chat({className,query,firstchat}:props) {
           setisweb(false)
           const Ragsearch= await RagSearch(query.query,activepdfs,setMessage,setSourcelist,setIsSearching)
           if(Ragsearch.aiResponse){
-            await init("AI",Ragsearch.aiResponse,sessionname,Ragsearch.sourceList)
+            await upload("AI",Ragsearch.aiResponse,sessionname)
           }
         }
         else if(query.type=="Web Search" && query.typeofmodel=="LLM"){
@@ -221,17 +291,18 @@ function Chat({className,query,firstchat}:props) {
           console.log('Regular query search:', shouldsearch)
           const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
           console.log(answer)
-          if(answer.aiResponse){
-            await init("AI",answer.aiResponse,sessionname,answer.sourceList)
+          if(answer){
+            await upload("AI",answer,sessionname)
           }
         }else{
+          console.log("search")
           shouldsearch = await searchOrweb(query, setIsSearching,setState,setisweb)
           console.log('Regular query LLM:', shouldsearch)
           //search query
           const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
           console.log(answer)
-          if(answer.aiResponse){
-            await init("AI",answer.aiResponse,sessionname,answer.sourcelist)
+          if(answer){
+            await upload("AI",answer,sessionname)
           }
         }
       } catch (error) {
