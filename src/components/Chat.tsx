@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react'
 import SignUpPopup from './SignUp'
 import { init } from '@/lib/Producer'
 import { useStore } from '@/store/store'
+import ExcalidrawApp from './Excalidraw'
 
 interface props {
     className?:string,
@@ -387,6 +388,7 @@ function Chat({className,query,firstchat}:props) {
                   <h1 className={` ${item.role == "AI" ? 'justify-start w-[97%]' : 'bg-[#292929] max-w-[80%]'} py-3 px-3 rounded-3xl relative`}>{item.role=='AI' ?  <AiResponse State={isweb} sources={item.sourceList}  content={item.content}/> :item.content}</h1>
                 </div>
               ))
+              // <ExcalidrawApp/>
               :
               <ChatSkeleton />
             }
@@ -405,6 +407,9 @@ function Chat({className,query,firstchat}:props) {
           </div>
         )}
       </div>
+      {/* <div className='w-[300px] h-[400px]'>
+        <ExcalidrawApp/>
+      </div> */}
     </div>
     {Signuppopup && <SignUpPopup
       window={setSignuppopup}

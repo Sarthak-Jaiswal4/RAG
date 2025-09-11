@@ -1,5 +1,6 @@
 'use client'
 import { AppSidebar } from "@/components/AppSidebar"
+import ExcalidrawApp from "@/components/Excalidraw"
 import Header from "@/components/Header"
 import { Pdfs } from "@/components/Pdfs"
 import Searchbar from "@/components/Searchbar"
