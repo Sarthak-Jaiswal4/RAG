@@ -56,7 +56,7 @@ const chatworker=new Worker('chatUploadQueue',async(job)=>{
 },{
     concurrency: 50,
     connection: {
-      host: 'localhost',
+      host: '3.111.52.242',
       port: 6379,
     },
     removeOnComplete: {
@@ -115,7 +115,7 @@ const fileworker=new Worker('fileuploadqueue',async(job)=>{
   console.log("saved successfully")
 },{
   connection: {
-    host: 'localhost',
+    host: '3.111.52.242',
     port: 6379,
   },
   removeOnComplete: {

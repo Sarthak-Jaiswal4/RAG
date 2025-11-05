@@ -275,7 +275,7 @@ export async function POST(request: Request) {
                 return "Sorry, I encountered an error while trying to answer your question.";
             }
         }
-        // If we reach here, something went wrong and we did not return a streamed response
+
         throw new Error('Failed to generate a response');
 
 } catch (error: any) {

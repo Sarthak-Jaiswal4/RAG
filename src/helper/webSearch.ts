@@ -9,7 +9,6 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 const llm = new ChatGoogleGenerativeAI({
   model: "gemini-2.5-flash",
   apiKey: process.env.GOOGLE_API_KEY,
-  // baseUrl:     "http://localhost:11434",
   temperature: 0.1,
 });
 
