@@ -60,7 +60,7 @@ async function DoWebSearch(query: string,type?:string) {
   try {
     const urls: URLArray[] = [];
     const res = await axios.get(
-      `http://localhost:8181/search?q=${newquery}&format=json`
+      `http://3.110.167.39:8181/search?q=${newquery}&format=json`
     );
 
     // Limit to 5 websites only
