@@ -7,13 +7,13 @@ import { UploadS3 } from './S3bucket';
 
 const ChatUploadQueue= new Queue('chatUploadQueue',{
     connection: {
-      host: "3.111.52.242",
+      host: "3.110.167.39",
       port: 6379,           
     },
   });
 const FileUploadQueue=new Queue('fileuploadqueue',{
     connection: {
-      host: "3.111.52.242",
+      host: "3.110.167.39",
       port: 6379,           
     },
   })
