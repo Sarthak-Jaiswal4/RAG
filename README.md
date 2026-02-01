@@ -48,6 +48,19 @@ To bridge the knowledge gap, Lamda integrates a self-hosted **SearXNG** instance
 
 ---
 
+## 🛠️ Tech Stack
+
+| Layer | Technology | Usage |
+| :--- | :--- | :--- |
+| **Frontend** | ![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white) | SSR, App Router, and utility-first styling for a responsive UI. |
+| **Orchestration** | ![LangChain](https://img.shields.io/badge/LangChain-121212?style=flat&logo=chainlink&logoColor=white) | Complex chain management, document loaders, and prompt engineering. |
+| **Asynchronous Processing** | ![BullMQ](https://img.shields.io/badge/BullMQ-FF4500?style=flat&logo=redis&logoColor=white) ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white) | Distributed task queue to decouple heavy PDF/Docx processing. |
+| **Database & Vector Store** | ![MongoDB Atlas](https://img.shields.io/badge/MongoDB_Atlas-47A248?style=flat&logo=mongodb&logoColor=white) | Persistent metadata storage and semantic vector search indexing. |
+| **Object Storage** | ![AWS S3](https://img.shields.io/badge/AWS_S3-569A31?style=flat&logo=amazons3&logoColor=white) | Secure and scalable cloud storage for raw document files. |
+| **Search Intelligence** | ![SearXNG](https://img.shields.io/badge/SearXNG-Live_Search-blue?style=flat) | Privacy-respecting meta-search engine for real-time web grounding. |
+| **Deployment & DevOps** | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white) ![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?style=flat&logo=amazonec2&logoColor=white) | Containerized environment running on scalable cloud instances. |
+| **CI/CD** | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat&logo=github-actions&logoColor=white) | Automated testing and deployment pipelines for zero-downtime updates. |
+
 ## ⚙️ The Data Flow
 
 ```mermaid
