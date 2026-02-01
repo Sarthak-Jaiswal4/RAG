@@ -1,82 +1,77 @@
 Live Website - https://rag-xi-peach.vercel.app/
 
-# <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Magnet.png" alt="Magnet" width="45" height="45" /> NexusRAG: Distributed Intelligence
+# <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/High%20Voltage.png" alt="Bolt" width="45" height="45" /> Lamda: Distributed Hybrid RAG
 
-> **Enterprise-Grade RAG Pipeline:** A high-performance, distributed Retrieval-Augmented Generation system leveraging asynchronous document processing, hybrid semantic search, and real-time web-meta-search.
+> **The Apex of Retrieval:** A high-throughput, distributed RAG platform that fuses private document intelligence with real-time web-scale search.
 
 <div align="center">
-  <img src="https://capsule-render.vercel.app/render?type=soft&color=auto&height=250&section=header&text=NexusRAG&fontSize=90&animation=fadeIn&fontAlignY=38" width="100%" />
+  <img src="https://capsule-render.vercel.app/render?type=soft&color=auto&height=250&section=header&text=Lamda&fontSize=90&animation=fadeIn&fontAlignY=38" width="100%" />
 </div>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Architecture-Distributed_System-6E40C9?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Retrieval-Hybrid_Semantic_BM25-00D4FF?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Processing-Async_Worker_Nodes-success?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Architecture-Distributed_Worker-6E40C9?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Search-Hybrid_Semantic_BM25-00D4FF?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Stack-NextJS_LangChain_MongoDB-success?style=for-the-badge" />
 </p>
 
 <p align="center">
-  <a href="#-the-problem">Problem</a> •
   <a href="#-technical-architecture">Architecture</a> •
-  <a href="#-deep-dive-retrieval">Retrieval Logic</a> •
-  <a href="#-infrastructure">Infrastructure</a> •
-  <a href="#-getting-started">Getting Started</a>
+  <a href="#-tech-stack">Tech Stack</a> •
+  <a href="#-distributed-ingestion">Ingestion</a> •
+  <a href="#-hybrid-search-engine">Hybrid Search</a> •
+  <a href="#-ci-cd--devops">DevOps</a>
 </p>
-
----
-
-## 📖 The Vision
-Most RAG applications fail when documents get large or queries require real-time context. **NexusRAG** solves this by decoupling document ingestion from the chat interface and bridging the gap between static documents and the live web.
-
-* **Asynchronous Scaling:** Heavy PDF/Docx processing is handled by dedicated workers, keeping the UI snappy.
-* **Contextual Accuracy:** Combines the "meaning" of Semantic Search with the "precision" of BM25.
-* **Live-Web Grounding:** Uses an isolated SearXNG instance to prevent hallucination on current events.
 
 ---
 
 ## 🏗️ Technical Architecture
 
-The system is split into three core layers: **The Gateway**, **The Brain**, and **The Worker**.
+Lamda is engineered to handle the "Heavy-Tail" problem in RAG—where document processing latency can degrade the user experience. By decoupling ingestion from the client-server loop, Lamda remains responsive even during massive document uploads.
 
-### 1. The Gateway (Next.js & LangChain)
-The frontend serves as the orchestration layer. It manages user sessions, toggles between "Direct LLM" and "RAG Mode," and streams responses in real-time.
+### 🧩 System Design Breakdown
 
-### 2. Distributed Ingestion Pipeline
-When a user uploads a `.pdf` or `.docx`:
-1.  **S3 Persistence:** The file is immediately streamed to **AWS S3**.
-2.  **BullMQ Messaging:** A job is created in **Redis**. This ensures that even if the server restarts, no document is lost.
-3.  **EC2 Worker:** A standalone Node.js worker pulls the job, performs **Recursive Character Text Splitting**, and generates 1536-dimensional embeddings.
-4.  **Vector Persistence:** Data is indexed in **MongoDB Atlas Vector Search**.
+#### 1. The Gateway & Orchestration (Next.js & LangChain)
+The application acts as a thin client for the UI but a heavy orchestrator for logic. It manages:
+* **Dynamic Routing:** Toggling between direct LLM completion, Vector RAG, and Web-Search RAG.
+* **Context Window Management:** Utilizing LangChain to summarize and prune retrieved context before injection.
 
-### 3. Real-time Search Meta-Engine
-For "Web Mode," the system queries an **EC2-hosted SearXNG** instance. Unlike Google Search APIs, SearXNG aggregates results from 70+ sources while maintaining privacy and providing raw markdown for better LLM scraping.
+#### 2. Asynchronous Ingestion (BullMQ & EC2)
+Instead of processing documents in the API route (which leads to timeouts), Lamda utilizes a **Producer-Consumer pattern**:
+* **Producer:** Next.js sends a signed URL for **AWS S3** and pushes a job to **BullMQ**.
+* **Broker:** **Redis** manages the queue, providing persistence and retry logic.
+* **Consumer:** A dedicated **EC2 Worker Node** runs a Node.js environment that performs recursive chunking, overlapping, and vector embedding generation (using `text-embedding-3-small` or `multilingual-e5`).
+
+#### 3. Real-Time Web Intelligence (SearXNG)
+To bridge the knowledge gap, Lamda integrates a self-hosted **SearXNG** instance on a separate EC2.
+* **Meta-Engine:** It aggregates results from 70+ search engines.
+* **Scraping Layer:** The engine extracts raw markdown content from the top-ranked URLs, allowing the LLM to "read" the web live without the cost of high-tier search APIs.
 
 ---
 
-## ⚙️ System Flow
+## ⚙️ The Data Flow
 
 ```mermaid
 graph TD
-    %% User Interaction
-    U[👤 User] -->|Query/Upload| FE[Next.js App]
+    %% Frontend
+    User((👤 User)) -->|Upload/Query| Next[Next.js Gateway]
     
-    %% Ingestion Path
-    subgraph "Asynchronous Ingestion Layer"
-        FE -->|Upload| S3[(AWS S3 Bucket)]
-        FE -->|Enqueue| BMQ[BullMQ / Redis]
-        BMQ -->|Job| WRK[EC2 Worker Instance]
-        WRK -->|Embeddings| MDB[(MongoDB Vector Store)]
+    subgraph "Asynchronous Ingestion (Worker Layer)"
+        Next -->|1. Store| S3[(AWS S3)]
+        Next -->|2. Enqueue| Redis[BullMQ / Redis]
+        Redis -->|3. Consume| EC2_W[EC2 Worker Instance]
+        EC2_W -->|4. Chunk & Embed| Mongo[(MongoDB Atlas)]
     end
     
-    %% Retrieval Path
-    subgraph "Hybrid Intelligence Layer"
-        FE -->|Hybrid Query| MDB
-        FE -->|Scrape| SXG[EC2 SearXNG Instance]
-        SXG -->|Meta-Search| WEB((🌐 Live Web))
-        MDB -->|Context| LC[LangChain Orchestrator]
-        WEB -->|Context| LC
-        LC -->|Final Answer| FE
+    subgraph "Intelligent Retrieval (Logic Layer)"
+        Next -->|Hybrid Search| Mongo
+        Next -->|Meta-Search| SXG[EC2 SearXNG]
+        SXG -->|Scrape| Web((🌐 Open Web))
+        
+        Mongo -->|Semantic + BM25| LC[LangChain]
+        Web -->|Real-time Data| LC
+        LC -->|Synthesized Answer| Next
     end
 
-    style WRK fill:#f96,stroke:#333,stroke-width:2px
+    style EC2_W fill:#f96,stroke:#333,stroke-width:2px
     style SXG fill:#4ea,stroke:#333,stroke-width:2px
-    style FE fill:#6E40C9,color:#fff
+    style Next fill:#6E40C9,color:#fff
