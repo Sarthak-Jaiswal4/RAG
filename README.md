@@ -1,6 +1,6 @@
 Live Website - https://rag-xi-peach.vercel.app/
 
-# <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/High%20Voltage.png" alt="Bolt" width="45" height="45" /> Lamda: Distributed Hybrid RAG
+# Lamda: Distributed Hybrid RAG
 
 > **The Apex of Retrieval:** A high-throughput, distributed RAG platform that fuses private document intelligence with real-time web-scale search.
 
