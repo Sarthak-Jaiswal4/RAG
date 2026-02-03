@@ -61,7 +61,7 @@ async function DoWebSearch(query: string,type?:string) {
   try {
     const urls: URLArray[] = [];
     const res = await axios.get(
-      `${process.env.EC2_IP}:8181/search?q=${newquery}&format=json`
+      `http://${process.env.EC2_IP}:8181/search?q=${newquery}&format=json`
     );
 
     // Limit to 5 websites only
