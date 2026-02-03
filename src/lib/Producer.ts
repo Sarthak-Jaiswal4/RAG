@@ -7,14 +7,24 @@ import { UploadS3 } from './S3bucket';
 
 const ChatUploadQueue= new Queue('chatUploadQueue',{
     connection: {
+<<<<<<< HEAD
       host: process.env.EC2_IP,
       port: 6380,           
+=======
+      host: "3.110.167.39",
+      port: 6379,           
+>>>>>>> 0de89717ab22d867222ac2e1fef8b79411a7829e
     },
   });
 const FileUploadQueue=new Queue('fileuploadqueue',{
     connection: {
+<<<<<<< HEAD
       host: process.env.EC2_IP,
       port: 6380,           
+=======
+      host: "3.110.167.39",
+      port: 6379,           
+>>>>>>> 0de89717ab22d867222ac2e1fef8b79411a7829e
     },
   })
 

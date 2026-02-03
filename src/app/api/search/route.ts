@@ -1,5 +1,4 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { DoWebSearch } from "../../../helper/action";
 import { NextRequest, NextResponse } from "next/server";
 import webSearch from '../../../helper/webSearch'
 import ExtractingInfo from '../../../helper/ExtractingInfo'
@@ -276,7 +275,7 @@ export async function POST(request: Request) {
                 return "Sorry, I encountered an error while trying to answer your question.";
             }
         }
-        // If we reach here, something went wrong and we did not return a streamed response
+
         throw new Error('Failed to generate a response');
 
 } catch (error: any) {
