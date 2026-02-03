@@ -13,6 +13,8 @@ const llm = new ChatGoogleGenerativeAI({
   temperature: 0.1,
 });
 
+console.log(process.env.GOOGLE_API_KEY);
+
 interface QueryAnalysis {
   original: string;
   paraphrases: string[];
@@ -60,7 +62,7 @@ async function DoWebSearch(query: string,type?:string) {
   try {
     const urls: URLArray[] = [];
     const res = await axios.get(
-      `http://localhost:8181/search?q=${newquery}&format=json`
+      `${process.env.EC2_IP}:8181/search?q=${newquery}&format=json`
     );
 
     // Limit to 5 websites only

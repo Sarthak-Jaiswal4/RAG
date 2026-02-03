@@ -56,8 +56,8 @@ const chatworker=new Worker('chatUploadQueue',async(job)=>{
 },{
     concurrency: 50,
     connection: {
-      host: 'localhost',
-      port: 6379,
+      host: process.env.EC2_IP,
+      port: 6380,
     },
     removeOnComplete: {
         age: 3600, // keep up to 1 hour
@@ -115,8 +115,8 @@ const fileworker=new Worker('fileuploadqueue',async(job)=>{
   console.log("saved successfully")
 },{
   connection: {
-    host: 'localhost',
-    port: 6379,
+    host: process.env.EC2_IP,
+    port: 6380,
   },
   removeOnComplete: {
       age: 3600, // keep up to 1 hour
